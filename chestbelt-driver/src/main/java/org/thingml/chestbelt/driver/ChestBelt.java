@@ -59,8 +59,12 @@ public class ChestBelt implements Runnable {
     }
     
     public void close() {
+        
         try {
             terminate = true;
+            // Wait up to 3 seconds for the rx thread to die before closing the streams
+            rxthread.join(3000); 
+            in.close();
             out.close();
         }
         catch(Exception e) {
@@ -185,11 +189,6 @@ public class ChestBelt implements Runnable {
             }
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        try {
-            in.close();
-        } catch (IOException ex) {
-            ex.printStackTrace();
         }
         
         System.err.println("ChestBelt: Receiver thread stopped.");
