@@ -190,8 +190,14 @@ public class ChestBelt implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
-        System.err.println("ChestBelt: Receiver thread stopped.");
+        finally {
+            System.err.println("ChestBelt: Receiver thread stopped.");
+            if (!terminate) {
+                for (ChestBeltListener l : listeners) {
+                    l.connectionLost();
+                }
+            }
+        }
     }
 
     long decodeLong(byte d1, byte d2, byte d3) {

@@ -52,4 +52,5 @@ public interface ChestBeltListener {
 		// IR Temperature sensor messages
 		void skinTemperature(int value, int timestamp);//  	@code "116";
 		
+                void connectionLost();
 }

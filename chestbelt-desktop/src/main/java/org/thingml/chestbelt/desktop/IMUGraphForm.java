@@ -247,4 +247,9 @@ private void windowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_win
     public void skinTemperature(int value, int timestamp) {
         //throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    @Override
+    public void connectionLost() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

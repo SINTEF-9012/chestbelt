@@ -254,5 +254,10 @@ public class ChestBeltFileLogger implements ChestBeltListener {
     public void skinTemperature(int value, int timestamp) {
         temperature = value;
     }
+
+    @Override
+    public void connectionLost() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
     
 }

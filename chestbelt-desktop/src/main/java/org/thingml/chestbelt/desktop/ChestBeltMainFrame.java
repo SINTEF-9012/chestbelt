@@ -1186,5 +1186,10 @@ static {
         }
     }
 
+    @Override
+    public void connectionLost() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
 
 }
