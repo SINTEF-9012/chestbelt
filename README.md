@@ -9,6 +9,6 @@ Bugs and Feature requests
 -------------------------
 Please see and use the issue tracker at: https://github.com/SINTEF-9012/chestbelt/issues
 
-Screenshots / Documentation
----------------------------
-Under construction at: https://github.com/SINTEF-9012/chestbelt/wiki
+Screenshot
+----------
+![ChestBelt Desktop Application](https://raw.github.com/SINTEF-9012/chestbelt/master/chestbelt/screenshots/ChestBeltJava2.png)
