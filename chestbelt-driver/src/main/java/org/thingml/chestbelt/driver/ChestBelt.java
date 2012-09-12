@@ -172,7 +172,8 @@ public class ChestBelt implements Runnable {
                                         combinedIMU(message);
                                         break;
                                     default:
-                                        System.err.println("ChestBelt: Received unknown message (code = " + code + ").");
+                                        break;
+                                        //System.err.println("ChestBelt: Received unknown message (code = " + code + ").");
                                 }
                                 // Re-initialize for the next message
                                 code = 0;
