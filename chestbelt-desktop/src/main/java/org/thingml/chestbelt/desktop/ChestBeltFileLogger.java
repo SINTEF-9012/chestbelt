@@ -67,13 +67,13 @@ public class ChestBeltFileLogger implements ChestBeltListener {
        File sFolder = new File(folder, sName);
        sFolder.mkdir();
        try {
-           log = new PrintWriter(new FileWriter(new File(sFolder, "Esusm_log.csv")));
+           log = new PrintWriter(new FileWriter(new File(sFolder, "Esusm_log.txt")));
            log.println("# This file contains one line per message received from the Chest Belt.");
-           ecg = new PrintWriter(new FileWriter(new File(sFolder, "Esusm_ecg.csv")));
+           ecg = new PrintWriter(new FileWriter(new File(sFolder, "Esusm_ecg.txt")));
            ecg.println("# ECG Data, Raw 12bits ADC values, 250Hz.");
-           imu = new PrintWriter(new FileWriter(new File(sFolder, "Esusm_imu.csv")));
+           imu = new PrintWriter(new FileWriter(new File(sFolder, "Esusm_imu.txt")));
            imu.println("Time" + SEPARATOR + "Time (ms)" + SEPARATOR + "Timestamp" + SEPARATOR + "AX" + SEPARATOR + "AY" + SEPARATOR + "AZ" + SEPARATOR + "GX" + SEPARATOR + "GY" + SEPARATOR + "GZ");
-           phi = new PrintWriter(new FileWriter(new File(sFolder, "Esusm_phi.csv")));
+           phi = new PrintWriter(new FileWriter(new File(sFolder, "Esusm_phi.txt")));
            phi.println("Time" + SEPARATOR + "Time (ms)" + SEPARATOR + "Timestamp" + SEPARATOR + "Heart Rate (BPM)" + SEPARATOR + "Temperature (°C)");
            
        } catch (IOException ex) {
