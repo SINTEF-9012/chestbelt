@@ -13,7 +13,7 @@
         <groupId>org.thingml</groupId>
         <artifactId>chestbelt</artifactId>
         <version>0.9.0-SNAPSHOT</version>
-        <relativePath>../chestbelt/pom.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
 <build>

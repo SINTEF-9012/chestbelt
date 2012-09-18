@@ -16,19 +16,20 @@
   </properties>
   
   <modules>
-        <module>../chestbelt-driver</module>
-        <module>../chestbelt-desktop</module>
+        <module>chestbelt-driver</module>
+        <module>chestbelt-desktop</module>
   </modules>
   
       <build>
         <plugins>
             <plugin>
+		<inherited>false</inherited>
                 <groupId>com.mycila.maven-license-plugin</groupId>
                 <artifactId>maven-license-plugin</artifactId>
                 <version>1.9.0</version>
                 <configuration>
                     <basedir>${basedir}</basedir>
-                    <header>${basedir}/../HEADER</header>
+                    <header>${basedir}/HEADER</header>
                     <strictCheck>true</strictCheck>
                     <properties>
                         <owner>SINTEF</owner>
@@ -77,7 +78,7 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
-	    
+
 	    <plugin>
 		<groupId>org.apache.maven.plugins</groupId>
 		<artifactId>maven-release-plugin</artifactId>
