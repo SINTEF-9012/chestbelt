@@ -8,3 +8,7 @@ Prerequistes:
 mvn --batch-mode release:prepare -DreleaseVersion=1.0.0 -DdevelopmentVersion=1.1.0-SNAPSHOT
 
 mvn release:perform
+
+NOTE:
+The release:perform will fail because it tried to create the JNLP but the realease will be deployed anyway. 
+Need to see how to create the JNLP at the same time.
