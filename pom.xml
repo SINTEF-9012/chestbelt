@@ -6,6 +6,26 @@
   <name>ChestBelt :: Root</name>
   <url>https://github.com/SINTEF-9012/chestbelt</url>
   
+  <developers>
+    <developer>
+      <name>Franck Fleurey</name>
+      <email>franck.fleurey@sintef.no</email>
+    </developer>
+  </developers>
+  
+  <organization>
+    <name>SINTEF</name>
+    <url>http://www.sintef.no</url>
+  </organization>
+
+  <licenses>
+    <license>
+      <name>LGPL</name>
+      <url>http://www.gnu.org/licenses/lgpl-3.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  
   <version>1.1.0-SNAPSHOT</version>
   
   <properties>
