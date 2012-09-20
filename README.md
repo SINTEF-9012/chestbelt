@@ -11,4 +11,4 @@ Please see and use the issue tracker at: https://github.com/SINTEF-9012/chestbel
 
 Screenshot
 ----------
-![ChestBelt Desktop Application](https://raw.github.com/SINTEF-9012/chestbelt/master/chestbelt/screenshots/ChestBeltJava2.png)
+![ChestBelt Desktop Application](https://raw.github.com/SINTEF-9012/chestbelt/master/chestbelt-resources/screenshots/ChestBeltJava2.png)
