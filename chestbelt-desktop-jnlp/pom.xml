@@ -1,0 +1,120 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.thingml</groupId>
+  <artifactId>chestbelt-desktop-jnlp</artifactId>
+  <version>1.1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>ChestBelt :: Desktop :: JNLP</name>
+
+    <parent>
+        <groupId>org.thingml</groupId>
+        <artifactId>chestbelt</artifactId>
+        <version>1.1.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+<build>
+  <plugins>
+
+        <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <configuration>
+                <archive>
+                    <manifest>
+                        <mainClass>org.thingml.chestbelt.desktop.ChestBeltMainFrame</mainClass>
+                    </manifest>
+                </archive>
+                <descriptorRefs>
+                    <descriptorRef>jar-with-dependencies</descriptorRef>
+                </descriptorRefs>
+            </configuration>
+        </plugin>
+        
+        
+        <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.1</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>org.thingml.chestbelt.desktop.ChestBeltMainFrame</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                        <configuration>
+                            <jarPath>${project.build.directory}/${project.build.finalName}-jar-with-dependencies.jar</jarPath>
+                            <keystore>/home/franck/thingml.ks</keystore>
+                            <alias>thingml</alias>
+                            <storepass>thingmlkeystore</storepass>
+                            <signedjar>${project.build.directory}/${project.build.finalName}-jar-with-dependencies-signed.jar</signedjar>
+                            <verify>true</verify>
+                        </configuration>
+                    </execution>
+                </executions>
+
+            </plugin>
+        
+        
+        <plugin>
+                <groupId>com.github.goldin</groupId>
+                <artifactId>copy-maven-plugin</artifactId>
+                <version>0.2.5</version>
+                <executions>
+                    <execution>
+                        <id>create-archive</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+
+                                <resource>
+                                    <targetPath>/var/www/dist/chestbelt</targetPath>
+                                    <file>${basedir}/ChestBelt.jnlp</file>
+                                    <destFileName>ChestBelt.jnlp</destFileName>
+                                </resource>
+                                <resource>
+                                    <targetPath>/var/www/dist/chestbelt</targetPath>
+                                    <file>
+                                        ${project.build.directory}/${project.build.finalName}-jar-with-dependencies-signed.jar
+                                    </file>
+                                    <destFileName>ChestBelt.jar</destFileName>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        
+        
+    </plugins>
+</build>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+        <groupId>org.thingml</groupId>
+        <artifactId>chestbelt-desktop</artifactId>
+        <version>1.1.0-SNAPSHOT</version>
+    </dependency>
+    
+  </dependencies>
+  
+</project>
