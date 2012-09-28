@@ -268,7 +268,6 @@ public class ChestBelt implements Runnable {
     // Time and clock synchronization messages
     synchronized void referenceClockTime(byte[] message) {
         long value = decode5byteLong(message[1], message[2], message[3], message[4], message[5]);
-        //System.out.println("message[1]-32=" + (message[1]-32) + "    ((message[1]-32) & 0x20) = "  + ((message[1]-32) & 0x20));
         boolean seconds = ((message[1]-32) & 0x20) == 0;
         for (ChestBeltListener l : listeners) {
             l.referenceClockTime(value, seconds);
@@ -382,6 +381,7 @@ public class ChestBelt implements Runnable {
 
     // IR Temperature sensor messages
     synchronized void skinTemperature(byte[] message) {
+        // TODO: This will not handle negative temperatures
         int value = ((message[1] - 32) * 64 + (message[2] - 32));
         int timestamp = ((message[3] - 32) * 64 + (message[4] - 32));
         for (ChestBeltListener l : listeners) {
