@@ -74,7 +74,7 @@ public class ChestBelt implements Runnable {
 
     public void run() {
 
-        byte[] buffer = new byte[1024];
+        byte[] buffer = new byte[32];
         int len = -1;
 
         int code = 0;
