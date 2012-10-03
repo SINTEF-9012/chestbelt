@@ -185,6 +185,11 @@ public class ChestBeltMainFrame extends javax.swing.JFrame implements ChestBeltL
         jTextFieldRefTime = new javax.swing.JTextField();
         jCheckBox1 = new javax.swing.JCheckBox();
         jButton7 = new javax.swing.JButton();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        jMenuItemUDPConnect = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("ChestBelt Test Application");
@@ -688,6 +693,32 @@ public class ChestBeltMainFrame extends javax.swing.JFrame implements ChestBeltL
                 .addContainerGap())
         );
 
+        jMenu1.setText("File");
+
+        jMenuItemUDPConnect.setText("UDP Connect");
+        jMenuItemUDPConnect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemUDPConnectActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItemUDPConnect);
+
+        jMenuBar1.add(jMenu1);
+
+        jMenu2.setText("Help");
+
+        jMenuItem1.setText("About");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem1);
+
+        jMenuBar1.add(jMenu2);
+
+        setJMenuBar(jMenuBar1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -729,7 +760,7 @@ public class ChestBeltMainFrame extends javax.swing.JFrame implements ChestBeltL
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanelECG, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
+                .addComponent(jPanelECG, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -841,6 +872,33 @@ private void jTextFieldRefTimeActionPerformed(java.awt.event.ActionEvent evt) {/
 // TODO add your handling code here:
 }//GEN-LAST:event_jTextFieldRefTimeActionPerformed
 
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jMenuItemUDPConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemUDPConnectActionPerformed
+        
+        UDPConnectDialog d = new UDPConnectDialog(this, true);
+        d.setVisible(true);
+        if (d.getResult() != null) {
+            belt = d.getResult();
+            belt.addChestBeltListener(this);
+            ((GraphPanel)jPanelECG).start();
+            counter = new BitRateCounter(belt);
+            counter.addChestBeltListener(this);
+            counter.start();
+            //belt.requestCUTime(0);
+            //belt.getModelInfo();
+            //belt.getSerialNumber();
+            //belt.getCUFWRevision(0);
+            //belt.setBTUpdateInterval(1);
+            jCheckBox1.setSelected(false);
+            total_overrun = 0;
+            jTextFieldOver.setText("" + total_overrun + " (0)");
+        }
+        
+    }//GEN-LAST:event_jMenuItemUDPConnectActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -899,6 +957,11 @@ private void jTextFieldRefTimeActionPerformed(java.awt.event.ActionEvent evt) {/
     private javax.swing.JLabel jLabel9;
     private javax.swing.JLabel jLabelActivity;
     private javax.swing.JLabel jLabelPosture;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItemUDPConnect;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
