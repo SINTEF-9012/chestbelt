@@ -239,7 +239,7 @@ public class UDPInputStream extends InputStream {
   }
 
   int lenRemaining = len;
-  
+  /*
   while(available() < lenRemaining) {
       System.arraycopy(ddata,
            packIdx,
@@ -249,7 +249,7 @@ public class UDPInputStream extends InputStream {
       lenRemaining -= available();
       receive();
   }
-
+*/
   System.arraycopy(ddata,
        packIdx,
        buff,
