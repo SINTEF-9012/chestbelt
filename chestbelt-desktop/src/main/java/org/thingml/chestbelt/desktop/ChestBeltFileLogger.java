@@ -66,14 +66,15 @@ public class ChestBeltFileLogger implements ChestBeltListener {
        String sName = createSessionName(); 
        File sFolder = new File(folder, sName);
        sFolder.mkdir();
+       imu_data_reset();
        try {
-           log = new PrintWriter(new FileWriter(new File(sFolder, "Esusm_log.txt")));
+           log = new PrintWriter(new FileWriter(new File(sFolder, "Chestbelt_log.txt")));
            log.println("# This file contains one line per message received from the Chest Belt.");
-           ecg = new PrintWriter(new FileWriter(new File(sFolder, "Esusm_ecg.txt")));
+           ecg = new PrintWriter(new FileWriter(new File(sFolder, "Chestbelt_ecg.txt")));
            ecg.println("# ECG Data, Raw 12bits ADC values, 250Hz.");
-           imu = new PrintWriter(new FileWriter(new File(sFolder, "Esusm_imu.txt")));
+           imu = new PrintWriter(new FileWriter(new File(sFolder, "Chestbelt_imu.txt")));
            imu.println("Time" + SEPARATOR + "Time (ms)" + SEPARATOR + "Timestamp" + SEPARATOR + "AX" + SEPARATOR + "AY" + SEPARATOR + "AZ" + SEPARATOR + "GX" + SEPARATOR + "GY" + SEPARATOR + "GZ");
-           phi = new PrintWriter(new FileWriter(new File(sFolder, "Esusm_phi.txt")));
+           phi = new PrintWriter(new FileWriter(new File(sFolder, "Chestbelt_phi.txt")));
            phi.println("Time" + SEPARATOR + "Time (ms)" + SEPARATOR + "Timestamp" + SEPARATOR + "Heart Rate (BPM)" + SEPARATOR + "Temperature (°C)");
            
        } catch (IOException ex) {
@@ -196,35 +197,131 @@ public class ChestBeltFileLogger implements ChestBeltListener {
     public void eCGRaw(int value, int timestamp) {
         //throw new UnsupportedOperationException("Not supported yet.");
     }
-
+    
+    
+    int ax, ay, az, gx, gy, gz;
+  
+    private void imu_data_reset() {
+        System.out.println("reset");
+        ax = Integer.MIN_VALUE;
+        ay = Integer.MIN_VALUE;
+        az = Integer.MIN_VALUE;
+        gx = Integer.MIN_VALUE;
+        gy = Integer.MIN_VALUE;
+        gz = Integer.MIN_VALUE;
+    }
+    
+    private boolean imu_data_ready() {
+        return ax != Integer.MIN_VALUE && ay != Integer.MIN_VALUE && az != Integer.MIN_VALUE && 
+               gx != Integer.MIN_VALUE && gy != Integer.MIN_VALUE && gz != Integer.MIN_VALUE;
+    }
+    
     @Override
     public void gyroPitch(int value, int timestamp) {
-        //throw new UnsupportedOperationException("Not supported yet.");
+        if (logging) {
+             System.out.println("gy");
+            if (gy == Integer.MIN_VALUE) {
+                gy = value;
+                if (imu_data_ready()) {
+                    imu.println(currentTimeStamp() + SEPARATOR + cbTimeStamp(timestamp) + SEPARATOR + A(ax) + SEPARATOR + A(ay) + SEPARATOR + A(az) + SEPARATOR + G(gx) + SEPARATOR + G(gy) + SEPARATOR + G(gz));
+                    imu_data_reset();
+                }
+            }
+            else {
+                imu_data_reset();
+                gy = value;
+            }
+        }
     }
 
     @Override
     public void gyroRoll(int value, int timestamp) {
-        //throw new UnsupportedOperationException("Not supported yet.");
+        if (logging) {
+            System.out.println("gx");
+            if (gx == Integer.MIN_VALUE) {
+                gx = value;
+                if (imu_data_ready()) {
+                    imu.println(currentTimeStamp() + SEPARATOR + cbTimeStamp(timestamp) + SEPARATOR + A(ax) + SEPARATOR + A(ay) + SEPARATOR + A(az) + SEPARATOR + G(gx) + SEPARATOR + G(gy) + SEPARATOR + G(gz));
+                    imu_data_reset();
+                }
+            }
+            else {
+                imu_data_reset();
+                gx = value;
+            }
+        }
     }
 
     @Override
     public void gyroYaw(int value, int timestamp) {
-        //throw new UnsupportedOperationException("Not supported yet.");
+        if (logging) {
+             System.out.println("gz");
+            if (gz == Integer.MIN_VALUE) {
+                gz = value;
+                if (imu_data_ready()) {
+                    imu.println(currentTimeStamp() + SEPARATOR + cbTimeStamp(timestamp) + SEPARATOR + A(ax) + SEPARATOR + A(ay) + SEPARATOR + A(az) + SEPARATOR + G(gx) + SEPARATOR + G(gy) + SEPARATOR + G(gz));
+                    imu_data_reset();
+                }
+            }
+            else {
+                imu_data_reset();
+                gz = value;
+            }
+        }
     }
 
     @Override
     public void accLateral(int value, int timestamp) {
-        //throw new UnsupportedOperationException("Not supported yet.");
+        if (logging) {
+             System.out.println("ay");
+            if (ay == Integer.MIN_VALUE) {
+                ay = value;
+                if (imu_data_ready()) {
+                    imu.println(currentTimeStamp() + SEPARATOR + cbTimeStamp(timestamp) + SEPARATOR + A(ax) + SEPARATOR + A(ay) + SEPARATOR + A(az) + SEPARATOR + G(gx) + SEPARATOR + G(gy) + SEPARATOR + G(gz));
+                    imu_data_reset();
+                }
+            }
+            else {
+                imu_data_reset();
+                ay = value;
+            }
+        }
     }
 
     @Override
     public void accLongitudinal(int value, int timestamp) {
-        //throw new UnsupportedOperationException("Not supported yet.");
+        if (logging) {
+             System.out.println("az");
+            if (az == Integer.MIN_VALUE) {
+                az = value;
+                if (imu_data_ready()) {
+                    imu.println(currentTimeStamp() + SEPARATOR + cbTimeStamp(timestamp) + SEPARATOR + A(ax) + SEPARATOR + A(ay) + SEPARATOR + A(az) + SEPARATOR + G(gx) + SEPARATOR + G(gy) + SEPARATOR + G(gz));
+                    imu_data_reset();
+                }
+            }
+            else {
+                imu_data_reset();
+                az = value;
+            }
+        }
     }
 
     @Override
     public void accVertical(int value, int timestamp) {
-        //throw new UnsupportedOperationException("Not supported yet.");
+        if (logging) {
+            System.out.println("ax");
+            if (ax == Integer.MIN_VALUE) {
+                ax = value;
+                if (imu_data_ready()) {
+                    imu.println(currentTimeStamp() + SEPARATOR + cbTimeStamp(timestamp) + SEPARATOR + A(ax) + SEPARATOR + A(ay) + SEPARATOR + A(az) + SEPARATOR + G(gx) + SEPARATOR + G(gy) + SEPARATOR + G(gz));
+                    imu_data_reset();
+                }
+            }
+            else {
+                imu_data_reset();
+                ax = value;
+            }
+        }
     }
 
     @Override
