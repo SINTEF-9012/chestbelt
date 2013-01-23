@@ -259,7 +259,7 @@ private void windowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_win
     public void eMGData(int value) {
         bemg.insertData(value);
         emg_count++;
-        System.out.print(".");
+        //System.out.print(".");
     }
 
     @Override
@@ -274,7 +274,7 @@ private void windowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_win
         jTextFieldTS.setText(""+timestamp);
         bemgrate.insertData(emg_count);
         emg_count = 0;
-        System.out.println("X");
+        //System.out.println("X");
     }
 
     @Override
