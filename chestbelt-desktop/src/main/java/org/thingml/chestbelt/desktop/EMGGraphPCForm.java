@@ -27,32 +27,49 @@ package org.thingml.chestbelt.desktop;
 
 import org.thingml.chestbelt.driver.ChestBelt;
 import org.thingml.chestbelt.driver.ChestBeltListener;
-import java.awt.Color;
 import org.thingml.rtcharts.swing.*;
 
 /**
  *
  * @author franck
  */
-public class EMGGraphForm extends javax.swing.JFrame implements ChestBeltListener {
+public class EMGGraphPCForm extends javax.swing.JFrame implements ChestBeltListener {
 
     
     protected GraphBuffer bemg = new GraphBuffer(1500);
-    protected GraphBuffer bemgrate = new GraphBuffer(500);
-    protected GraphBuffer brmsa = new GraphBuffer(500);
-    protected GraphBuffer brmsb = new GraphBuffer(500);
-     
+    
     protected ChestBelt belt;
     
+    protected GraphBuffer bemgpc = new GraphBuffer(1000);
+    protected GraphBuffer brmspc = new GraphBuffer(500);
+    protected int rms_window = 200;
+    protected int rms_period = 100;
+    protected int rms_count = 0;
+    
+    public void computeRMS() {
+        long rms = 0;
+        int[] data = bemg.getGraphData();
+        if (data[data.length-1] <0 || data[data.length-1] > 4096 ) return; // There is not enough data in the buffer
+        int value;
+        for (int i = 0; i<rms_window; i++) {
+            value = data[data.length - 1 - i] - 2048;
+            rms += value * value;
+        }
+        rms /= rms_window;
+        int result = (int)Math.sqrt(rms);
+        brmspc.insertData(result);
+        bemgpc.insertData(data[data.length - 1 - rms_window/3]);
+        bemgpc.insertData(data[data.length - 1 - 2*rms_window/3]);
+    }
+    
+    
     /** Creates new form ECGGraphForm */
-    public EMGGraphForm(ChestBelt b) {
+    public EMGGraphPCForm(ChestBelt b) {
         this.belt = b;
         if (b != null) b.addChestBeltListener(this);
         initComponents();
         ((GraphPanel)jPanel1).start();
-        ((GraphPanel)jPanel2).start();
-        ((GraphPanel)jPanel3).start();
-        ((GraphPanel)jPanel4).start();
+        ((GraphPanel)jPanel7).start();
     }
     
     /** This method is called from within the constructor to
@@ -65,51 +82,90 @@ public class EMGGraphForm extends javax.swing.JFrame implements ChestBeltListene
     private void initComponents() {
 
         jPanel5 = new javax.swing.JPanel();
-        jPanel4 = new LineGraphPanel(bemg, "Raw EMG Value", 0, 4096, 1024, new java.awt.Color(0, 204, 51));
-        jPanel2 = new LineGraphPanel(brmsa, "EMG RMS Value (Belt Channel A)", 0, 4096, 512, new java.awt.Color(0, 204, 51));
-        jPanel3 = new LineGraphPanel(brmsb, "EMG RMS Value (Belt Channel B)", 0, 4096, 512, new java.awt.Color(0, 204, 51));
-        jPanel1 = new BarGraphPanel(bemgrate, "Raw ECG Rate (# val between timestamps)", 0, 200, 50, new java.awt.Color(0, 204, 51));
+        jPanel1 = new LineGraphPanel(brmspc, "RMS EMG (PC)", 0, 512, 128, new java.awt.Color(0, 204, 51));
+        jPanel7 = new LineGraphPanel(bemgpc, "Raw EMG (PC RMS Sync)", 1024, 3072, 256, new java.awt.Color(0, 204, 51));
         jPanel6 = new javax.swing.JPanel();
-        jLabel4 = new javax.swing.JLabel();
-        jTextFieldTS = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        jComboBox1 = new javax.swing.JComboBox();
+        jLabel2 = new javax.swing.JLabel();
+        jComboBox2 = new javax.swing.JComboBox();
+        jLabel3 = new javax.swing.JLabel();
+        jComboBox3 = new javax.swing.JComboBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("ChestBelt EMG Graphs");
+        setTitle("PC Side EMG Processing");
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosed(java.awt.event.WindowEvent evt) {
-                EMGGraphForm.this.windowClosed(evt);
+                EMGGraphPCForm.this.windowClosed(evt);
             }
         });
 
         jPanel5.setLayout(new javax.swing.BoxLayout(jPanel5, javax.swing.BoxLayout.PAGE_AXIS));
-        jPanel5.add(jPanel4);
-        jPanel5.add(jPanel2);
-        jPanel5.add(jPanel3);
         jPanel5.add(jPanel1);
+        jPanel5.add(jPanel7);
 
         getContentPane().add(jPanel5, java.awt.BorderLayout.CENTER);
 
-        jLabel4.setText("Timestamp:");
+        jLabel1.setText("RMS window:");
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "10", "25", "50", "75", "100", "150", "200", "250", "500", "1000" }));
+        jComboBox1.setSelectedIndex(6);
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("RMS period:");
+
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "10", "25", "50", "75", "100", "150", "200", "250", "500", "1000" }));
+        jComboBox2.setSelectedIndex(4);
+        jComboBox2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox2ActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setText("RMS max:");
+
+        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "128", "256", "512", "1024", "2048" }));
+        jComboBox3.setSelectedIndex(2);
+        jComboBox3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox3ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
-                .addContainerGap(455, Short.MAX_VALUE)
-                .addComponent(jLabel4)
+                .addContainerGap(145, Short.MAX_VALUE)
+                .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextFieldTS, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
-                .addGap(5, 5, 5)
+                .addGap(1, 1, 1)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(jTextFieldTS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(2, 2, 2))
+                    .addComponent(jLabel1)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2)
+                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3)
+                    .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         getContentPane().add(jPanel6, java.awt.BorderLayout.NORTH);
@@ -120,10 +176,39 @@ public class EMGGraphForm extends javax.swing.JFrame implements ChestBeltListene
 private void windowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_windowClosed
     if (belt != null) belt.removeChestBeltListener(this);
     ((GraphPanel)jPanel1).stop();
-    ((GraphPanel)jPanel2).stop();
-    ((GraphPanel)jPanel3).stop();
-    ((GraphPanel)jPanel4).stop();
+    ((GraphPanel)jPanel7).stop();
 }//GEN-LAST:event_windowClosed
+
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        try {
+            rms_window = Integer.parseInt(jComboBox1.getSelectedItem().toString());
+            rms_count = 0;
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_jComboBox1ActionPerformed
+
+    private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox2ActionPerformed
+        try {
+            rms_period = Integer.parseInt(jComboBox2.getSelectedItem().toString());
+            rms_count = 0;
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_jComboBox2ActionPerformed
+
+    private void jComboBox3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox3ActionPerformed
+        try {
+            int max = Integer.parseInt(jComboBox3.getSelectedItem().toString());
+            ((GraphPanel)jPanel1).setYmax(max);
+            ((GraphPanel)jPanel1).setYminor(max/4);
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_jComboBox3ActionPerformed
 
     
     
@@ -238,14 +323,16 @@ private void windowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_win
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel4;
+    private javax.swing.JComboBox jComboBox1;
+    private javax.swing.JComboBox jComboBox2;
+    private javax.swing.JComboBox jComboBox3;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
-    private javax.swing.JTextField jTextFieldTS;
+    private javax.swing.JPanel jPanel7;
     // End of variables declaration//GEN-END:variables
 
     @Override
@@ -253,13 +340,13 @@ private void windowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_win
         //throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    protected int emg_count = 0;
-    
     @Override
     public void eMGData(int value) {
+        if (rms_count >= rms_period) {
+            computeRMS();
+            rms_count = 0;
+        } else { rms_count++; }
         bemg.insertData(value);
-        emg_count++;
-        System.out.print(".");
     }
 
     @Override
@@ -269,17 +356,14 @@ private void windowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_win
 
     @Override
     public void eMGRaw(int value, int timestamp) {
+        if (rms_count >= rms_period) {
+            computeRMS();
+            rms_count = 0;
+        } else { rms_count++; }
         bemg.insertData(value);
-        emg_count++;
-        jTextFieldTS.setText(""+timestamp);
-        bemgrate.insertData(emg_count);
-        emg_count = 0;
-        System.out.println("X");
     }
 
     @Override
     public void eMGRMS(int channelA, int channelB, int timestamp) {
-        brmsa.insertData(channelA);
-        brmsb.insertData(channelB);
     }
 }
