@@ -36,6 +36,13 @@ public interface ChestBeltListener {
 		void eCGSignalQuality(int value, int timestamp);//  	@code "102";
 		void eCGRaw(int value, int timestamp);//  				@code "103"; // Not sure which data type
 		
+                // EMG Messages
+                void eMGData(int value);
+		void eMGSignalQuality(int value, int timestamp);
+		void eMGRaw(int value, int timestamp);
+                void eMGRMS(int channelA, int channelB, int timestamp);
+                
+                
 		// Gyroscope messages
 		void gyroPitch(int value, int timestamp);//  			@code "112";
 		void gyroRoll(int value, int timestamp);// 			@code "114";

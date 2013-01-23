@@ -354,7 +354,27 @@ public class ChestBeltFileLogger implements ChestBeltListener {
 
     @Override
     public void connectionLost() {
-        throw new UnsupportedOperationException("Not supported yet.");
+       
+    }
+
+    @Override
+    public void eMGData(int value) {
+        
+    }
+
+    @Override
+    public void eMGSignalQuality(int value, int timestamp) {
+        
+    }
+
+    @Override
+    public void eMGRaw(int value, int timestamp) {
+        
+    }
+
+    @Override
+    public void eMGRMS(int channelA, int channelB, int timestamp) {
+        
     }
     
 }

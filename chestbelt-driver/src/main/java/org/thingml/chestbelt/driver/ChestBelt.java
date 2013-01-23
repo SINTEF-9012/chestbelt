@@ -35,11 +35,14 @@ public class ChestBelt implements Runnable {
     }
 
     private int msg_size(byte code) {
-        if (code == 101) {
+        if (code == 101 || code == 122) {
             return 3;
         } else if (code == 106 || code == 107 || code == 110 || code == 112 || code == 114 || code == 117 || code == 121) {
             return 6;
-        } else if (code == 120) {
+        } else if (code == 125) {
+            return 7;
+        }
+        else if (code == 120) {
             return 18;
         } else {
             return 5; // default value for other messages
@@ -171,6 +174,19 @@ public class ChestBelt implements Runnable {
                                     case 120:
                                         combinedIMU(message);
                                         break;
+                                    case 122:
+                                        eMGData(message);
+                                        break;
+                                    case 123:
+                                        eMGSignalQuality(message);
+                                        break;
+                                    case 124:
+                                        eMGRaw(message);
+                                        break;
+                                    case 125:
+                                        eMGRMS(message);
+                                        break;
+                                     
                                     default:
                                         break;
                                         //System.err.println("ChestBelt: Received unknown message (code = " + code + ").");
@@ -319,6 +335,39 @@ public class ChestBelt implements Runnable {
         int timestamp = ((message[3] - 32) * 64 + (message[4] - 32));
         for (ChestBeltListener l : listeners) {
             l.eCGRaw(value, timestamp);
+        }
+    }
+    
+    // EMG Messages
+    synchronized void eMGSignalQuality(byte[] message) {
+        int value = ((message[1] - 32) * 64 + (message[2] - 32));
+        int timestamp = ((message[3] - 32) * 64 + (message[4] - 32));
+        for (ChestBeltListener l : listeners) {
+            l.eMGSignalQuality(value, timestamp);
+        }
+    }
+
+    synchronized void eMGRaw(byte[] message) {
+        int value = ((message[1] - 32) * 64 + (message[2] - 32));
+        int timestamp = ((message[3] - 32) * 64 + (message[4] - 32));
+        for (ChestBeltListener l : listeners) {
+            l.eMGRaw(value, timestamp);
+        }
+    }
+    
+    synchronized void eMGData(byte[] message) {
+        int value = ((message[1] - 32) * 64 + (message[2] - 32));
+        for (ChestBeltListener l : listeners) {
+            l.eMGData(value);
+        }
+    }
+    
+    synchronized void eMGRMS(byte[] message) {
+        int channelA = ((message[1] - 32) * 64 + (message[2] - 32));
+        int channelB = ((message[3] - 32) * 64 + (message[4] - 32));
+        int timestamp = ((message[5] - 32) * 64 + (message[6] - 32));
+        for (ChestBeltListener l : listeners) {
+            l.eMGRMS(channelA, channelB, timestamp);
         }
     }
 
