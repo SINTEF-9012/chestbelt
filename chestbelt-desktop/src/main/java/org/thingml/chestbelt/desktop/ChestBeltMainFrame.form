@@ -66,7 +66,7 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="jPanel1" alignment="1" max="32767" attributes="0"/>
-                  <Component id="jPanelECG" alignment="1" pref="990" max="32767" attributes="0"/>
+                  <Component id="jPanelECG" alignment="1" pref="930" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jPanel6" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -104,7 +104,7 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jPanel3" min="-2" max="-2" attributes="1"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jPanelECG" max="32767" attributes="0"/>
+              <Component id="jPanelECG" pref="149" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
@@ -132,25 +132,25 @@
                           <Component id="jLabel7" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jTextFieldIMUTime" min="-2" pref="86" max="-2" attributes="0"/>
-                          <EmptySpace pref="178" max="32767" attributes="0"/>
+                          <EmptySpace pref="121" max="32767" attributes="0"/>
                           <Component id="jButton2" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jProgressBarAx" alignment="1" pref="337" max="32767" attributes="0"/>
-                              <Component id="jProgressBarAy" alignment="0" pref="337" max="32767" attributes="0"/>
-                              <Component id="jProgressBarAz" alignment="0" pref="337" max="32767" attributes="0"/>
+                              <Component id="jProgressBarAx" alignment="1" pref="283" max="32767" attributes="0"/>
+                              <Component id="jProgressBarAy" alignment="0" pref="283" max="32767" attributes="0"/>
+                              <Component id="jProgressBarAz" alignment="0" pref="283" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jProgressBarGz" alignment="1" pref="338" max="32767" attributes="0"/>
-                              <Component id="jProgressBarGy" alignment="0" pref="338" max="32767" attributes="0"/>
-                              <Component id="jProgressBarGx" alignment="0" pref="338" max="32767" attributes="0"/>
+                              <Component id="jProgressBarGz" alignment="1" pref="286" max="32767" attributes="0"/>
+                              <Component id="jProgressBarGy" alignment="0" pref="286" max="32767" attributes="0"/>
+                              <Component id="jProgressBarGx" alignment="0" pref="286" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -294,7 +294,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jProgressBarT" pref="792" max="32767" attributes="0"/>
+                  <Component id="jProgressBarT" pref="734" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jTextFieldTTime" min="-2" pref="80" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -357,7 +357,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jProgressBarHR" pref="792" max="32767" attributes="0"/>
+                  <Component id="jProgressBarHR" pref="734" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jTextFieldHRTime" min="-2" pref="80" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -544,7 +544,7 @@
                   <Component id="jLabel16" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jTextFieldOver" min="-2" pref="97" max="-2" attributes="0"/>
-                  <EmptySpace pref="215" max="32767" attributes="0"/>
+                  <EmptySpace pref="126" max="32767" attributes="0"/>
                   <Component id="jLabel20" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jTextFieldBitRate" min="-2" pref="72" max="-2" attributes="0"/>
@@ -660,7 +660,7 @@
                   <Component id="jButton4" min="-2" max="-2" attributes="1"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jButton3" min="-2" max="-2" attributes="1"/>
-                  <EmptySpace pref="363" max="32767" attributes="0"/>
+                  <EmptySpace pref="296" max="32767" attributes="0"/>
                   <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jComboBoxBTInt" min="-2" max="-2" attributes="0"/>
@@ -756,7 +756,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jLabel12" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jProgressBarBatt" pref="499" max="32767" attributes="0"/>
+                  <Component id="jProgressBarBatt" pref="453" max="32767" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="jRadioButtonOn" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
