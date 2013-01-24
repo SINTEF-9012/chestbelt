@@ -39,21 +39,21 @@
       <SubComponents>
         <Container class="javax.swing.JPanel" name="jPanel1">
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new LineGraphPanel(brmspc, &quot;RMS EMG (PC)&quot;, 0, 512, 128, new java.awt.Color(0, 204, 51));"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new LineGraphPanel(brmspc, &quot;EMG PC RMS (2 sec/div)&quot;, 0, 512, 128, 20, new java.awt.Color(0, 204, 51));"/>
           </AuxValues>
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout"/>
         </Container>
         <Container class="javax.swing.JPanel" name="jPanel7">
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new LineGraphPanel(bemgpc, &quot;Raw EMG (PC RMS Sync)&quot;, 1024, 3072, 256, new java.awt.Color(0, 204, 51));"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new LineGraphPanel(bemgpc, &quot;Raw EMG (2 sec/div)&quot;, -1024, 1024, 512, 40, new java.awt.Color(0, 204, 51));"/>
           </AuxValues>
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout"/>
         </Container>
         <Container class="javax.swing.JPanel" name="jPanel8">
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new LineGraphPanel(bfftpc, &quot;EMG Frequency Distribution (0-500Hz)&quot;, 0, 1500, 100, new java.awt.Color(255, 204, 0));"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new LineGraphPanel(bfftpc, &quot;EMG Frequency Distribution (50 Hz/div)&quot;, 0, 1500, 250, 13, new java.awt.Color(255, 204, 0));"/>
           </AuxValues>
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout"/>

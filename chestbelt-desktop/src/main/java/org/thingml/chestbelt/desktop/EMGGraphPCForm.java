@@ -43,7 +43,7 @@ public class EMGGraphPCForm extends javax.swing.JFrame implements ChestBeltListe
     
     protected GraphBuffer bemgpc = new GraphBuffer(1000);
     protected GraphBuffer brmspc = new GraphBuffer(500);
-    protected GraphBuffer bfftpc = new GraphBuffer(127);
+    protected GraphBuffer bfftpc = new GraphBuffer(130);
     protected int rms_window = 200;
     protected int rms_period = 100;
     protected int rms_count = 0;
@@ -54,7 +54,7 @@ public class EMGGraphPCForm extends javax.swing.JFrame implements ChestBeltListe
         if (data[data.length-1] <0 || data[data.length-1] > 4096 ) return; // There is not enough data in the buffer
         int value;
         for (int i = 0; i<rms_window; i++) {
-            value = data[data.length - 1 - i] - 2048;
+            value = data[data.length - 1 - i];
             rms += value * value;
         }
         rms /= rms_window;
@@ -73,7 +73,7 @@ public class EMGGraphPCForm extends javax.swing.JFrame implements ChestBeltListe
          if (data[data.length-1] <0 || data[data.length-1] > 4096 ) return; // There is not enough data in the buffer
          double[] input = new double[fft_window];
          for (int i = 0; i<fft_window; i++) {
-             input[i] = (data[data.length - fft_window + i] - 2048.0f) / 2048.0f; // Scale between 0 and 1
+             input[i] = (data[data.length - fft_window + i]) / 2048.0f; // Scale between 0 and 1
          }
          
          DoubleFFT_1D fftDo = new DoubleFFT_1D(input.length);
@@ -82,24 +82,21 @@ public class EMGGraphPCForm extends javax.swing.JFrame implements ChestBeltListe
          
          fftDo.realForwardFull(fft);
          
-         //int[] old = bfftpc.getGraphData();
          
+         // Put a 0 instead of the DC average
+         bfftpc.insertData(0); 
+         
+         // Fill the buffer with the amplitude for the 127 FFT bins 
          int i=2;
          while(i<fft_window) {
-             /*
-             int avg = 0;
-             for (int j=0; j<5; j++) {
-                 avg += (int)(fft[i]*100);
-                 i++;
-             }
-             */
-             
              int amplitude = (int)(Math.sqrt(fft[i]*fft[i] + fft[i+1]*fft[i+1])*50);
-             
-             
-            bfftpc.insertData(amplitude); 
+             bfftpc.insertData(amplitude); 
             i+=2;
          }
+         
+         // Add 2 values to go the the 130 buffer size
+         bfftpc.insertData(0); 
+         bfftpc.insertData(0); 
      }
     
     
@@ -123,9 +120,9 @@ public class EMGGraphPCForm extends javax.swing.JFrame implements ChestBeltListe
     private void initComponents() {
 
         jPanel5 = new javax.swing.JPanel();
-        jPanel1 = new LineGraphPanel(brmspc, "RMS EMG (PC)", 0, 512, 128, new java.awt.Color(0, 204, 51));
-        jPanel7 = new LineGraphPanel(bemgpc, "Raw EMG (PC RMS Sync)", 1024, 3072, 256, new java.awt.Color(0, 204, 51));
-        jPanel8 = new LineGraphPanel(bfftpc, "EMG Frequency Distribution (0-500Hz)", 0, 1500, 100, new java.awt.Color(255, 204, 0));
+        jPanel1 = new LineGraphPanel(brmspc, "EMG PC RMS (2 sec/div)", 0, 512, 128, 20, new java.awt.Color(0, 204, 51));
+        jPanel7 = new LineGraphPanel(bemgpc, "Raw EMG (2 sec/div)", -1024, 1024, 512, 40, new java.awt.Color(0, 204, 51));
+        jPanel8 = new LineGraphPanel(bfftpc, "EMG Frequency Distribution (50 Hz/div)", 0, 1500, 250, 13, new java.awt.Color(255, 204, 0));
         jPanel6 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jComboBox1 = new javax.swing.JComboBox();
@@ -237,6 +234,9 @@ private void windowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_win
         try {
             rms_period = Integer.parseInt(jComboBox2.getSelectedItem().toString());
             rms_count = 0;
+            ((GraphPanel)jPanel1).setXminor(2000/rms_period);
+            ((GraphPanel)jPanel7).setXminor(4000/rms_period);
+            
         }
         catch(Exception e) {
             e.printStackTrace();
@@ -398,7 +398,7 @@ private void windowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_win
             fft_count = 0;
         } else { fft_count++; }
         
-        bemg.insertData(value);
+        bemg.insertData(value-2048);
     }
 
     @Override
@@ -419,7 +419,7 @@ private void windowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_win
             fft_count = 0;
         } else { fft_count++; }
         
-        bemg.insertData(value);
+        bemg.insertData(value-2048);
     }
 
     @Override
