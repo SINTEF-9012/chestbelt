@@ -51,6 +51,8 @@ public class ChestBeltFileLogger implements ChestBeltListener {
     protected PrintWriter ecg;
     protected PrintWriter imu;
     protected PrintWriter phi;
+    protected PrintWriter emg;
+    protected PrintWriter rms;
     
     public ChestBeltFileLogger(File folder) {
         this.folder = folder;
@@ -70,10 +72,19 @@ public class ChestBeltFileLogger implements ChestBeltListener {
        try {
            log = new PrintWriter(new FileWriter(new File(sFolder, "Chestbelt_log.txt")));
            log.println("# This file contains one line per message received from the Chest Belt.");
+           
            ecg = new PrintWriter(new FileWriter(new File(sFolder, "Chestbelt_ecg.txt")));
            ecg.println("# ECG Data, Raw 12bits ADC values, 250Hz.");
+           
+           emg = new PrintWriter(new FileWriter(new File(sFolder, "Chestbelt_emg.txt")));
+           emg.println("# EMG Data, Raw 12bits ADC values, 1kHz.");
+           
+           rms = new PrintWriter(new FileWriter(new File(sFolder, "Chestbelt_emg_rms.txt")));
+           rms.println("# EMG RMS Values for channel A and B, 12bits values, 10Hz.");
+           
            imu = new PrintWriter(new FileWriter(new File(sFolder, "Chestbelt_imu.txt")));
            imu.println("Time" + SEPARATOR + "Time (ms)" + SEPARATOR + "Timestamp" + SEPARATOR + "AX" + SEPARATOR + "AY" + SEPARATOR + "AZ" + SEPARATOR + "GX" + SEPARATOR + "GY" + SEPARATOR + "GZ");
+           
            phi = new PrintWriter(new FileWriter(new File(sFolder, "Chestbelt_phi.txt")));
            phi.println("Time" + SEPARATOR + "Time (ms)" + SEPARATOR + "Timestamp" + SEPARATOR + "Heart Rate (BPM)" + SEPARATOR + "Temperature (°C)");
            
@@ -92,10 +103,14 @@ public class ChestBeltFileLogger implements ChestBeltListener {
             ecg.close();
             imu.close();
             phi.close();
+            rms.close();
+            emg.close();
             log = null;
             ecg = null;
             imu = null;
             phi = null;
+            rms = null;
+            emg = null;
         }
     }
     
@@ -202,7 +217,7 @@ public class ChestBeltFileLogger implements ChestBeltListener {
     int ax, ay, az, gx, gy, gz;
   
     private void imu_data_reset() {
-        System.out.println("reset");
+        //System.out.println("reset");
         ax = Integer.MIN_VALUE;
         ay = Integer.MIN_VALUE;
         az = Integer.MIN_VALUE;
@@ -219,7 +234,7 @@ public class ChestBeltFileLogger implements ChestBeltListener {
     @Override
     public void gyroPitch(int value, int timestamp) {
         if (logging) {
-             System.out.println("gy");
+             //System.out.println("gy");
             if (gy == Integer.MIN_VALUE) {
                 gy = value;
                 if (imu_data_ready()) {
@@ -237,7 +252,7 @@ public class ChestBeltFileLogger implements ChestBeltListener {
     @Override
     public void gyroRoll(int value, int timestamp) {
         if (logging) {
-            System.out.println("gx");
+            //System.out.println("gx");
             if (gx == Integer.MIN_VALUE) {
                 gx = value;
                 if (imu_data_ready()) {
@@ -255,7 +270,7 @@ public class ChestBeltFileLogger implements ChestBeltListener {
     @Override
     public void gyroYaw(int value, int timestamp) {
         if (logging) {
-             System.out.println("gz");
+             //System.out.println("gz");
             if (gz == Integer.MIN_VALUE) {
                 gz = value;
                 if (imu_data_ready()) {
@@ -273,7 +288,7 @@ public class ChestBeltFileLogger implements ChestBeltListener {
     @Override
     public void accLateral(int value, int timestamp) {
         if (logging) {
-             System.out.println("ay");
+             //System.out.println("ay");
             if (ay == Integer.MIN_VALUE) {
                 ay = value;
                 if (imu_data_ready()) {
@@ -291,7 +306,7 @@ public class ChestBeltFileLogger implements ChestBeltListener {
     @Override
     public void accLongitudinal(int value, int timestamp) {
         if (logging) {
-             System.out.println("az");
+             //System.out.println("az");
             if (az == Integer.MIN_VALUE) {
                 az = value;
                 if (imu_data_ready()) {
@@ -309,7 +324,7 @@ public class ChestBeltFileLogger implements ChestBeltListener {
     @Override
     public void accVertical(int value, int timestamp) {
         if (logging) {
-            System.out.println("ax");
+            //System.out.println("ax");
             if (ax == Integer.MIN_VALUE) {
                 ax = value;
                 if (imu_data_ready()) {
@@ -359,7 +374,9 @@ public class ChestBeltFileLogger implements ChestBeltListener {
 
     @Override
     public void eMGData(int value) {
-        
+        if (logging) {
+            emg.println(value);
+        }
     }
 
     @Override
@@ -369,12 +386,16 @@ public class ChestBeltFileLogger implements ChestBeltListener {
 
     @Override
     public void eMGRaw(int value, int timestamp) {
-        
+        if (logging) {
+            emg.println(value + SEPARATOR + currentTimeStamp() + SEPARATOR + cbTimeStamp(timestamp));
+        }
     }
 
     @Override
     public void eMGRMS(int channelA, int channelB, int timestamp) {
-        
+        if (logging) {
+            rms.println(currentTimeStamp() + SEPARATOR + cbTimeStamp(timestamp) + SEPARATOR + channelA + SEPARATOR + channelB);
+        }
     }
     
 }
