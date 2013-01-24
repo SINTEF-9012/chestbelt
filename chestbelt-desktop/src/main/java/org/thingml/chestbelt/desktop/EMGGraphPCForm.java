@@ -51,7 +51,7 @@ public class EMGGraphPCForm extends javax.swing.JFrame implements ChestBeltListe
     public void computeRMS() {
         long rms = 0;
         int[] data = bemg.getGraphData();
-        if (data[data.length-1] <0 || data[data.length-1] > 4096 ) return; // There is not enough data in the buffer
+        if (data[data.length-1] <-2048 || data[data.length-1] > 2048 ) return; // There is not enough data in the buffer
         int value;
         for (int i = 0; i<rms_window; i++) {
             value = data[data.length - 1 - i];
@@ -70,7 +70,7 @@ public class EMGGraphPCForm extends javax.swing.JFrame implements ChestBeltListe
     
      public void computeFFT() {
          int[] data = bemg.getGraphData();
-         if (data[data.length-1] <0 || data[data.length-1] > 4096 ) return; // There is not enough data in the buffer
+         if (data[data.length-1] < -2048 || data[data.length-1] > 2048 ) return; // There is not enough data in the buffer
          double[] input = new double[fft_window];
          for (int i = 0; i<fft_window; i++) {
              input[i] = (data[data.length - fft_window + i]) / 2048.0f; // Scale between 0 and 1
