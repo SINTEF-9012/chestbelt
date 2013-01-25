@@ -282,4 +282,9 @@ private void windowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_win
         brmsa.insertData(channelA);
         brmsb.insertData(channelB);
     }
+    
+    @Override
+    public void fullClockTimeSyncSequence(long value, boolean seconds, int timeSyncSeqNum) {
+        
+    }
 }

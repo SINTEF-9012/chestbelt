@@ -398,4 +398,9 @@ public class ChestBeltFileLogger implements ChestBeltListener {
         }
     }
     
+    @Override
+    public void fullClockTimeSyncSequence(long value, boolean seconds, int timeSyncSeqNum) {
+        
+    }
+    
 }

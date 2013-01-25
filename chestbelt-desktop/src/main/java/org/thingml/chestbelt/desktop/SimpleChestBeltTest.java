@@ -361,5 +361,10 @@ static {
     public void eMGRMS(int channelA, int channelB, int timestamp) {
       
     }
+    
+    @Override
+    public void fullClockTimeSyncSequence(long value, boolean seconds, int timeSyncSeqNum) {
+        
+    }
 
 }

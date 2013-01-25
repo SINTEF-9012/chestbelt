@@ -41,21 +41,29 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.UIManager;
 import org.thingml.rtcharts.swing.*;
+import org.thingml.timesync.TimeSynchronizable;
+import org.thingml.timesync.TimeSynchronizer;
+import org.thingml.timesync.TimeSynchronizerPrintLogger;
 
 /**
  *
  * @author ffl
  */
-public class ChestBeltMainFrame extends javax.swing.JFrame implements ChestBeltListener, BitRateListemer {
+public class ChestBeltMainFrame extends javax.swing.JFrame implements ChestBeltListener, BitRateListemer, TimeSynchronizable {
 
     ChestBelt belt = null;
     protected GraphBuffer becg = new GraphBuffer(1000);
     BitRateCounter counter = null;
     
+    protected TimeSynchronizer timesync = new TimeSynchronizer(this);
+    
     /** Creates new form MainFrame */
     public ChestBeltMainFrame() {
         initComponents();
         setLocationRelativeTo(null);
+        
+        //timesync.addLogger(new TimeSynchronizerPrintLogger());
+        
     }
     
     private SerialPort serialPort = null;
@@ -639,6 +647,7 @@ public class ChestBeltMainFrame extends javax.swing.JFrame implements ChestBeltL
             }
         });
 
+        jCheckBox1.setSelected(true);
         jCheckBox1.setText("4ms resolution");
         jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -787,7 +796,7 @@ public class ChestBeltMainFrame extends javax.swing.JFrame implements ChestBeltL
             counter = new BitRateCounter(belt);
             counter.addChestBeltListener(this);
             counter.start();
-            belt.requestCUTime(0);
+            belt.requestCUTime(1); // default to 4ms timestamps
             belt.getModelInfo();
             belt.getSerialNumber();
             belt.getCUFWRevision(0);
@@ -795,9 +804,13 @@ public class ChestBeltMainFrame extends javax.swing.JFrame implements ChestBeltL
             jCheckBox1.setSelected(false);
             total_overrun = 0;
             jTextFieldOver.setText("" + total_overrun + " (0)");
+             // start the timesync
+            timesync.start_timesync();
         }
         else { // Disconnect
              try {
+                  // start the timesync
+                timesync.stop_timesync();
                 belt.close();
                 belt = null;
                if (serialPort != null) tryToCloseSerialPort();
@@ -1296,6 +1309,19 @@ static {
     @Override
     public void eMGRMS(int channelA, int channelB, int timestamp) {
         
+    }
+    
+    // Time sync implementation:
+    // Forward Ping and Pongs
+    
+    @Override
+    public void fullClockTimeSyncSequence(long value, boolean seconds, int timeSyncSeqNum) {
+        timesync.receive_TimeResponse(timeSyncSeqNum, value);
+    }
+
+    @Override
+    public void sendTimeRequest(int seq_num) {
+        if (belt != null) belt.requestCUTime(seq_num);
     }
 
 

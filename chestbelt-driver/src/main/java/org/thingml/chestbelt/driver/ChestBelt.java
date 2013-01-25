@@ -271,9 +271,9 @@ public class ChestBelt implements Runnable {
         }
     }
     
-    long decode5byteLong(byte d1, byte d2, byte d3, byte d4, byte d5) {
+    long decode4byteLong(byte d2, byte d3, byte d4, byte d5) {
         long result = 0;
-        result += ((d1 - 32) & 0x1F) << 24; // dicard bit 29 which is used for something else
+//        result += ((d1 - 32) & 0x1F) << 24; // dicard bit 29 which is used for something else
         result += ((d2 - 32) & 0x3F) << 18;
         result += ((d3 - 32) & 0x3F) << 12;
         result += ((d4 - 32) & 0x3F) << 6;
@@ -283,20 +283,27 @@ public class ChestBelt implements Runnable {
 
     // Time and clock synchronization messages
     synchronized void referenceClockTime(byte[] message) {
-        long value = decode5byteLong(message[1], message[2], message[3], message[4], message[5]);
+        long value = decode4byteLong(message[2], message[3], message[4], message[5]);
         boolean seconds = ((message[1]-32) & 0x20) == 0;
         for (ChestBeltListener l : listeners) {
-            l.referenceClockTime(value, seconds);
+              l.referenceClockTime(value, seconds);
         }
     }
 
     synchronized void fullClockTimeSync(byte[] message) {
-        long value = decode5byteLong(message[1], message[2], message[3], message[4], message[5]);
+        long value = decode4byteLong(message[2], message[3], message[4], message[5]);
         boolean seconds = ((message[1]-32) & 0x20) == 0;
+        int timeSyncSeqNum = ((message[1]-32) & 0x1f);
+        boolean timeSync = timeSyncSeqNum != 0;
+        //System.out.println("Message[1] = " + message[1] + " timeSyncSeqNum = " + timeSyncSeqNum);
         for (ChestBeltListener l : listeners) {
-            l.fullClockTimeSync(value, seconds);
+            if (timeSync)
+              l.fullClockTimeSyncSequence(value, seconds, timeSyncSeqNum);
+            else
+              l.fullClockTimeSync(value, seconds);
         }
     }
+
 
     // ECG and Heart rate messages
     synchronized void heartRate(byte[] message) {
