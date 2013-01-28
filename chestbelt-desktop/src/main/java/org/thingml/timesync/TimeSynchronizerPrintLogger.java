@@ -35,5 +35,10 @@ public class TimeSynchronizerPrintLogger implements ITimeSynchronizerLogger {
     public void timeSyncStop() {
         System.out.println("TimeSync: STOP.");
     }
+
+    @Override
+    public void timeSyncPong(int delay, int dtt, int dtr, int dts) {
+        
+    }
     
 }

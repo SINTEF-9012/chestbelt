@@ -43,6 +43,7 @@ import javax.swing.UIManager;
 import org.thingml.rtcharts.swing.*;
 import org.thingml.timesync.TimeSynchronizable;
 import org.thingml.timesync.TimeSynchronizer;
+import org.thingml.timesync.TimeSynchronizerFrame;
 import org.thingml.timesync.TimeSynchronizerPrintLogger;
 
 /**
@@ -61,8 +62,6 @@ public class ChestBeltMainFrame extends javax.swing.JFrame implements ChestBeltL
     public ChestBeltMainFrame() {
         initComponents();
         setLocationRelativeTo(null);
-        
-        //timesync.addLogger(new TimeSynchronizerPrintLogger());
         
     }
     
@@ -156,6 +155,7 @@ public class ChestBeltMainFrame extends javax.swing.JFrame implements ChestBeltL
         jTextFieldSFW = new javax.swing.JTextField();
         jLabel16 = new javax.swing.JLabel();
         jTextFieldOver = new javax.swing.JTextField();
+        jButton11 = new javax.swing.JButton();
         jPanel8 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jComboBoxMode = new javax.swing.JComboBox(org.thingml.chestbelt.driver.ChestBeltMode.values());
@@ -456,6 +456,13 @@ public class ChestBeltMainFrame extends javax.swing.JFrame implements ChestBeltL
         jLabel16.setForeground(new java.awt.Color(255, 0, 0));
         jLabel16.setText("Overrun :");
 
+        jButton11.setText("Time...");
+        jButton11.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton11ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -473,13 +480,15 @@ public class ChestBeltMainFrame extends javax.swing.JFrame implements ChestBeltL
                 .addComponent(jLabel16)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTextFieldOver, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 126, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
                 .addComponent(jLabel20)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTextFieldBitRate, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton8)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton11)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -497,7 +506,8 @@ public class ChestBeltMainFrame extends javax.swing.JFrame implements ChestBeltL
                     .addComponent(jLabel15)
                     .addComponent(jTextFieldSFW, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel16)
-                    .addComponent(jTextFieldOver, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTextFieldOver, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton11))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -934,6 +944,12 @@ private void jTextFieldRefTimeActionPerformed(java.awt.event.ActionEvent evt) {/
         emgform.setVisible(true);
     }//GEN-LAST:event_jButton10ActionPerformed
 
+    private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
+        TimeSynchronizerFrame timeframe = new TimeSynchronizerFrame(timesync);
+        timeframe.setSize(400, 500);
+        timeframe.setVisible(true);
+    }//GEN-LAST:event_jButton11ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -968,6 +984,7 @@ private void jTextFieldRefTimeActionPerformed(java.awt.event.ActionEvent evt) {/
     private javax.swing.ButtonGroup buttonGroupStatus;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
+    private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
@@ -1316,7 +1333,8 @@ static {
     
     @Override
     public void fullClockTimeSyncSequence(long value, boolean seconds, int timeSyncSeqNum) {
-        timesync.receive_TimeResponse(timeSyncSeqNum, value);
+        // the value is multiplied by 4 to get a timestamp in ms
+        timesync.receive_TimeResponse(timeSyncSeqNum, value*4);
     }
 
     @Override

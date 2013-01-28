@@ -69,5 +69,10 @@ public class TimeSynchronizerFileLogger implements ITimeSynchronizerLogger {
     public void timeSyncStop() {
         
     }
+
+    @Override
+    public void timeSyncPong(int delay, int dtt, int dtr, int dts) {
+        
+    }
     
 }
