@@ -75,4 +75,20 @@ public class TimeSynchronizerFileLogger implements ITimeSynchronizerLogger {
         
     }
     
+    @Override
+    public void timeSyncReady() {
+    }
+
+    @Override
+    public void timeSyncWrongSequence(int pingSeqNum, int pongSeqNum) {
+    }
+
+    @Override
+    public void timeSyncDtsFilter(int dts) {
+    }
+    
+     @Override
+    public void timeSyncErrorFilter(int error) {
+    }
+    
 }

@@ -13,16 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
-/*
- * MainFrame.java
- *
- * Created on 29.jun.2012, 12:22:18
- */
 package org.thingml.chestbelt.desktop;
 
 import org.thingml.chestbelt.driver.ChestBelt;
@@ -41,9 +32,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.UIManager;
 import org.thingml.rtcharts.swing.*;
+import org.thingml.timesync.TimeSyncErrorFrame;
+import org.thingml.timesync.TimeSyncFrame;
 import org.thingml.timesync.TimeSynchronizable;
 import org.thingml.timesync.TimeSynchronizer;
-import org.thingml.timesync.TimeSynchronizerFrame;
+import org.thingml.timesync.TimeSyncPingFrame;
 import org.thingml.timesync.TimeSynchronizerPrintLogger;
 
 /**
@@ -56,7 +49,7 @@ public class ChestBeltMainFrame extends javax.swing.JFrame implements ChestBeltL
     protected GraphBuffer becg = new GraphBuffer(1000);
     BitRateCounter counter = null;
     
-    protected TimeSynchronizer timesync = new TimeSynchronizer(this);
+    protected TimeSynchronizer timesync = new TimeSynchronizer(this, 0x3FFF); // 14 bits timestamp (in milliseconds)
     
     /** Creates new form MainFrame */
     public ChestBeltMainFrame() {
@@ -945,9 +938,11 @@ private void jTextFieldRefTimeActionPerformed(java.awt.event.ActionEvent evt) {/
     }//GEN-LAST:event_jButton10ActionPerformed
 
     private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
-        TimeSynchronizerFrame timeframe = new TimeSynchronizerFrame(timesync);
-        timeframe.setSize(400, 500);
-        timeframe.setVisible(true);
+        
+        TimeSyncFrame f = new TimeSyncFrame(timesync);
+        f.pack();
+        f.setVisible(true);
+        
     }//GEN-LAST:event_jButton11ActionPerformed
 
     /**
@@ -1334,12 +1329,15 @@ static {
     @Override
     public void fullClockTimeSyncSequence(long value, boolean seconds, int timeSyncSeqNum) {
         // the value is multiplied by 4 to get a timestamp in ms
-        timesync.receive_TimeResponse(timeSyncSeqNum, value*4);
+        int ts = (int) (value & 0x0FFF); // get the 12 bits timestamp
+        ts = ts*4; // Put the timestamp in ms (that makes a 14bits timestamp)
+        
+        timesync.receive_TimeResponse(timeSyncSeqNum-2, ts);
     }
 
     @Override
     public void sendTimeRequest(int seq_num) {
-        if (belt != null) belt.requestCUTime(seq_num);
+        if (belt != null) belt.requestCUTime(seq_num+2);
     }
 
 

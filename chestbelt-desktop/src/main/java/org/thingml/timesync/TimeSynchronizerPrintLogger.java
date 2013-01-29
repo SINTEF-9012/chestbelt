@@ -4,15 +4,6 @@
  */
 package org.thingml.timesync;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  *
  * @author ffl
@@ -39,6 +30,22 @@ public class TimeSynchronizerPrintLogger implements ITimeSynchronizerLogger {
     @Override
     public void timeSyncPong(int delay, int dtt, int dtr, int dts) {
         
+    }
+    
+    @Override
+    public void timeSyncReady() {
+    }
+
+    @Override
+    public void timeSyncWrongSequence(int pingSeqNum, int pongSeqNum) {
+    }
+
+    @Override
+    public void timeSyncDtsFilter(int dts) {
+    }
+    
+     @Override
+    public void timeSyncErrorFilter(int error) {
     }
     
 }

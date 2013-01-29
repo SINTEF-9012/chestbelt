@@ -10,14 +10,96 @@ public class TimeSynchronizer implements Runnable {
 
     /**
      * ************************************************************************
+     * Configuration and parameters of the Time Sync Algorithm
+     * ***********************************************************************
+     */
+    private int pingRate = 250;  // Rate for ping in milliseconds
+    
+    private int pingSeqMax = 8;  // Maximum sequence number for the pings
+    
+    private int dTsDeltaMax = 25; // delta time for TsFilter
+    private int tsErrorMax = 50; // Maximum deviation for a calculated offset compared to regOffset
+    
+    private int zeroOffsetAvgSize = 10; // Number of samples to calculate the initial offset
+    
+    private int ts_maxvalue = 0x3FFF;   // 14 bits timestamp wrap-around
+    private int ts_phase_frame = 4096;
+    
+    private int kInt = 64; // 1/ki - Number of milliseconds to inc/dec
+
+    public int getPingSeqMax() {
+        return pingSeqMax;
+    }
+
+    public void setPingSeqMax(int pingSeqMax) {
+        this.pingSeqMax = pingSeqMax;
+    }
+    
+    public int getTs_maxvalue() {
+        return ts_maxvalue;
+    }
+
+    public int getdTsDeltaMax() {
+        return dTsDeltaMax;
+    }
+
+    public void setdTsDeltaMax(int dTsDeltaMax) {
+        this.dTsDeltaMax = dTsDeltaMax;
+    }
+
+    public int getTsErrorMax() {
+        return tsErrorMax;
+    }
+
+    public void setTsErrorMax(int tsErrorMax) {
+        this.tsErrorMax = tsErrorMax;
+    }
+
+    public int getZeroOffsetAvgSize() {
+        return zeroOffsetAvgSize;
+    }
+
+    public void setZeroOffsetAvgSize(int zeroOffsetAvgSize) {
+        this.zeroOffsetAvgSize = zeroOffsetAvgSize;
+    }
+
+    public int getTs_phase_frame() {
+        return ts_phase_frame;
+    }
+
+    public void setTs_phase_frame(int ts_phase_frame) {
+        this.ts_phase_frame = ts_phase_frame;
+    }
+
+    public int getkInt() {
+        return kInt;
+    }
+
+    public void setkInt(int kInt) {
+        this.kInt = kInt;
+    }
+    
+    public int getPingRate() {
+        return pingRate;
+    }
+
+    public void setPingRate(int pingRate) {
+        this.pingRate = pingRate;
+    }
+ 
+    /**
+     * ************************************************************************
      * constructor and link to the device
      * ***********************************************************************
      */
     protected TimeSynchronizable device;
 
-    public TimeSynchronizer(TimeSynchronizable device) {
+    public TimeSynchronizer(TimeSynchronizable device, int ts_maxvalue) {
         this.device = device;
+        this.ts_maxvalue = ts_maxvalue;
+        this.ts_phase_frame = ts_maxvalue / 4;
     }
+    
     /**
      * ************************************************************************
      * Logging
@@ -36,34 +118,37 @@ public class TimeSynchronizer implements Runnable {
     public void removeAllLoggers() {
         loggers.clear();
     }
-    /**
+    
+     /**
      * ************************************************************************
-     * Configuration and parameters of the Time Sync Algorithm
+     * Algorithm internal data structures
      * ***********************************************************************
      */
-    final private int updateRate = 250;  // Rate for ping in milliseconds
-    final private int dTsMax = 275; // Maximum delta time for TsFilter
-    final private int dTsMin = 225; // Minimum delta time for TsFilter
-    final private int dTsDeltaMax = 25; // delta time for TsFilter
-    final private long tsErrorMax = 50; // Maximum deviation for a calculated offset compared to regOffset
-    // private long refClockPrev = 0; // Previous fullClock value used to detect wraparound
     private long tsPrev = 0; // Previous TS value used for TsFilter
     private long tmrPrev = 0; // Previous TS value used for TsFilter
     private long tmtPrev = 0; // Previous TS value used for TsFilter
-    final private int tmtArrSize = 10;  // Max number used to dimasion array for TMT
-    private long[] tmtArr = new long[tmtArrSize]; // Time for transmitting the "RequestTimeInfo"
-    final private int zeroOffsetAvgSize = 10;
+    
     private int zeroOffsetAvgCount = zeroOffsetAvgSize;
     private long zeroOffset = 0; // Calculated offset as a zero value. 
     // Changed using cuWrapIncrement when CU clock wraps
     //final private long cuWrapIncrement = 0x100000000L; // Wraps at (2^30)*4
+    
     private long regOffset = 0; // Regulator output offset
     private long errorSum = 0; // Sum of error - used by integrator
-    final private long kInt = 64; // 1/ki - Number of milliseconds to inc/dec
-    private int pingSeqNum = 2;
-    protected int max_timestamp = 0x0FFF;   // 12 bits timestamp wrap-around
-    protected int phase_frame = 1024;
-    protected int max_seq_number = 3; // 2 bits
+    
+    private int pingSeqNum = 0;
+    private long tmt = 0;
+    
+    //final private int tmtArrSize = 10;  // Max number used to dimasion array for TMT
+    //private long[] tmtArr = new long[tmtArrSize]; // Time for transmitting the "RequestTimeInfo"
+    
+    private static final int UNKNOWN_WRAP = 0;
+    private static final int NO_WRAP = 1;
+    private static final int BEFORE_WRAP = 2;
+    private static final int AFTER_WRAP = 3;
+    private int ts_phase = UNKNOWN_WRAP;
+    private long ts_offset = 0;
+    
     /**
      * ************************************************************************
      * Utility functions
@@ -83,12 +168,12 @@ public class TimeSynchronizer implements Runnable {
     public void start_timesync() {
         //refClockPrev = 0;
         state = INIT;
+        ts_phase = UNKNOWN_WRAP;
+        ts_offset = 0;
         tsPrev = 0; // Previous TS value used for TsFilter
         tmrPrev = 0;
         tmtPrev = 0;
-        for (int i = 0; i < tmtArrSize; i++) {
-            tmtArr[i] = 0; // Time for transmitting the "RequestTimeInfo"
-        }
+        tmt = 0;
         zeroOffsetAvgCount = zeroOffsetAvgSize;
         zeroOffset = 0; // Calculated offset as a zero value. 
         regOffset = 0; // Regulator output offset
@@ -107,15 +192,14 @@ public class TimeSynchronizer implements Runnable {
     }
 
     private void send_ping() {
-        //System.out.println("Ping");
         pingSeqNum++;
-        if (pingSeqNum >= tmtArrSize) {
-            pingSeqNum = 2;
+        
+        if (pingSeqNum > pingSeqMax) { 
+            pingSeqNum = 0;
         }
-        tmtArr[pingSeqNum] = System.currentTimeMillis();
+        
+        tmt = System.currentTimeMillis();
         device.sendTimeRequest(pingSeqNum);
-
-        //System.out.println("Ping" + pingSeqNum);
     }
 
     public long getRegOffset() {
@@ -123,13 +207,11 @@ public class TimeSynchronizer implements Runnable {
     }
     /**
      * ************************************************************************
-     * Handling of the pong and calculation of the magic offset
+     * Handling of the pong and calculation of the clock offset
      * ***********************************************************************
      */
     private static int INIT = 0;
     private static int READY = 1;
-    //private static int BEFORE_WRAP = 2;
-    //private static int AFTER_WRAP = 3;
     private int state = INIT;
 
     public void receive_TimeResponse(int timeSyncSeqNum, long value) {
@@ -137,28 +219,50 @@ public class TimeSynchronizer implements Runnable {
         //--------------------------------------
         // 1) Validate the ping sequence number
         //--------------------------------------
-        if (timeSyncSeqNum >= tmtArrSize) {
+        if (timeSyncSeqNum > pingSeqMax) {
             timeSyncSeqNum = 0;  // Range check of sequence number. Should never occur
-        }
-        if (tmtArr[timeSyncSeqNum] == 0 || timeSyncSeqNum != pingSeqNum) {// The the ping sequence number is not correct
-            System.out.println("Skip - Rep seqNum = " + timeSyncSeqNum + " Req seqNum = " + pingSeqNum);
+            for (ITimeSynchronizerLogger l : loggers) l.timeSyncWrongSequence(pingSeqNum, timeSyncSeqNum);
             return;
         }
-
+        if (tmt == 0 || timeSyncSeqNum != pingSeqNum) {// The the ping sequence number is not correct
+            System.out.println("Skip - Rep seqNum = " + timeSyncSeqNum + " Req seqNum = " + pingSeqNum);
+            for (ITimeSynchronizerLogger l : loggers) l.timeSyncWrongSequence(pingSeqNum, timeSyncSeqNum);
+            return;
+        }
+        
+        //----------------------------------------------
+        // 1b) Management of the slave clock wrap around 
+        //----------------------------------------------
+        
+        if (ts_phase == UNKNOWN_WRAP) {
+            ts_offset = 0; // initialize
+            if (value > (ts_maxvalue - ts_phase_frame)) ts_phase = BEFORE_WRAP;
+            else if (value < ts_phase_frame) ts_phase = UNKNOWN_WRAP; // wait until we are out of the AFTER_WRAP zone to avoid negative ts
+            else ts_phase = NO_WRAP;
+        }
+        else if (ts_phase == NO_WRAP && value > (ts_maxvalue - ts_phase_frame)) {
+            ts_phase = BEFORE_WRAP;
+        }
+        else if (ts_phase == BEFORE_WRAP && value < ts_phase_frame) {
+            ts_offset += ts_maxvalue + 1; // increment the offset
+            ts_phase = AFTER_WRAP;
+        }
+        else if (ts_phase == AFTER_WRAP && value > ts_phase_frame) {
+            ts_phase = NO_WRAP;
+        }
+    
+        long ts = ts_offset + value;  // Slave timestamp which does not wrap around.
+        
         //---------------------------------------------
         // 2) Collect all timing data (TMT, TMR and TS)
         //---------------------------------------------
         long tmr = System.currentTimeMillis();
-        long tmt = tmtArr[timeSyncSeqNum];
-        tmtArr[timeSyncSeqNum] = 0; // Reset tmt to filter away other clock updates if sequence was correct.
-        long ts = value;  // Convert to milliseconds
+        
         int dTmr = (int) (tmr - tmrPrev); // time between the 2 last Pongs
         int dTmt = (int) (tmt - tmtPrev); // Time between the 2 last Pings
         int dTs = (int) (ts - tsPrev); // Time between last ts - Used by TsFilter
 
-        for (ITimeSynchronizerLogger l : loggers) {
-            l.timeSyncPong((int) (tmr - tmt), (int) dTmt, (int) dTmr, (int) dTs);
-        }
+        for (ITimeSynchronizerLogger l : loggers) l.timeSyncPong((int) (tmr - tmt), (int) dTmt, (int) dTmr, (int) dTs);
 
         tmrPrev = tmr;
         tmtPrev = tmt;
@@ -169,6 +273,7 @@ public class TimeSynchronizer implements Runnable {
         //---------------------------------------------------------
         if (dTs < dTmt - dTsDeltaMax || dTs > dTmt + dTsDeltaMax) {
             System.out.println("Skip by dTs Filter - dTS = " + dTs);
+            for (ITimeSynchronizerLogger l : loggers) l.timeSyncDtsFilter(dTs);
             return;
         }
 
@@ -187,6 +292,7 @@ public class TimeSynchronizer implements Runnable {
                 regOffset = zeroOffset; // Initialize regOffset to "zero"
                 System.out.println("TimeSync=>zeroOffset calculated");
                 state = READY;
+                for (ITimeSynchronizerLogger l : loggers) l.timeSyncReady();
             }
             zeroOffsetAvgCount--;
             return;
@@ -201,20 +307,21 @@ public class TimeSynchronizer implements Runnable {
         if (state == READY) {
             if (error > tsErrorMax) {
                 System.out.println("Limit - error(+) = " + error);
+                for (ITimeSynchronizerLogger l : loggers) l.timeSyncErrorFilter((int)error);
             }
             else if (error < -tsErrorMax) {
                 System.out.println("Limit - error(-) = " + error);
+                for (ITimeSynchronizerLogger l : loggers) l.timeSyncErrorFilter((int)error);
             }
             else {
                 // Running integrator
                 errorSum += error;
                 regOffset = zeroOffset + (errorSum / kInt);
             }
-
         }
 
         for (ITimeSynchronizerLogger l : loggers) {
-            l.timeSyncLog(currentTimeStamp(), ts, tmt, tmr, delay, offset, errorSum, zeroOffset, regOffset, state);
+            l.timeSyncLog(currentTimeStamp(), ts, tmt, tmr, delay, offset, errorSum, zeroOffset, regOffset, ts_phase);
         }
 
     }
@@ -224,22 +331,21 @@ public class TimeSynchronizer implements Runnable {
      * Translation of device timestanp into synchronized timestamp
      * ***********************************************************************
      */
-    /*
-     public String cbTimeStamp(int t) {
-     Calendar regOffsetTod = Calendar.getInstance();
-     long regOffsetMsEpoc = ((t+refTime)*4) + timeSync.getRegOffset();
-     regOffsetTod.setTimeInMillis(regOffsetMsEpoc);
 
-     //return timestampFormat.format( Calendar.getInstance().getTime());
-     return (t+refTime-cbStartTime)*4 + SEPARATOR + timestampFormat.format(regOffsetTod.getTime()) + SEPARATOR + regOffsetMsEpoc;
-     }
-     */
     public long getSynchronizedEpochTime(int timestamp) {
 
-        if (regOffset == 0) {
+        if (regOffset == 0 || ts_phase == UNKNOWN_WRAP) {
             return 0; // We are not yet synchronized
         }
-        return timestamp + this.getRegOffset();
+        if (ts_phase == BEFORE_WRAP && timestamp < ts_phase_frame) {
+            return this.getRegOffset() + ts_maxvalue + 1 + timestamp;
+        }
+        else if (ts_phase == AFTER_WRAP && timestamp > (ts_maxvalue - ts_phase_frame)) {
+            return this.getRegOffset() - ts_maxvalue - 1 + timestamp;
+        }
+        else {
+            return this.getRegOffset() + timestamp;
+        }
     }
     /**
      * ************************************************************************
@@ -273,7 +379,7 @@ public class TimeSynchronizer implements Runnable {
             do {
                 // initiate a ping every "period" milliseconds
                 send_ping();
-                Thread.sleep(updateRate);
+                Thread.sleep(pingRate);
             } while (!stop_request);
         } catch (InterruptedException ex) {
             Logger.getLogger(TimeSynchronizer.class.getName()).log(Level.SEVERE, null, ex);

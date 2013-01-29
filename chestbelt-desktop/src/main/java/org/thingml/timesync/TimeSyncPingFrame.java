@@ -11,7 +11,7 @@ import org.thingml.rtcharts.swing.*;
  *
  * @author ffl
  */
-public class TimeSynchronizerFrame extends javax.swing.JFrame implements ITimeSynchronizerLogger {
+public class TimeSyncPingFrame extends javax.swing.JFrame implements ITimeSynchronizerLogger {
 
     
     protected GraphBuffer bping = new GraphBuffer(100);
@@ -20,16 +20,18 @@ public class TimeSynchronizerFrame extends javax.swing.JFrame implements ITimeSy
     protected GraphBuffer bdts = new GraphBuffer(100);
     protected TimeSynchronizer ts = null;
     
-    protected TimeSynchronizerPrintLogger tspl = new TimeSynchronizerPrintLogger();
+    private int pingrate = 250;
+    
+    
     
     /**
      * Creates new form TimeSynchronizerFrame
      */
-    public TimeSynchronizerFrame(TimeSynchronizer ts) {
+    public TimeSyncPingFrame(TimeSynchronizer ts) {
         initComponents();
         this.ts = ts;
+        pingrate = ts.getPingRate();
         ts.addLogger(this);
-        ts.addLogger(tspl);
         ((GraphPanel)jPanel2).start();
         ((GraphPanel)jPanel3).start();
         ((GraphPanel)jPanel4).start();
@@ -47,9 +49,9 @@ public class TimeSynchronizerFrame extends javax.swing.JFrame implements ITimeSy
 
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new BarGraphPanel(bping, "Roundtrip ping time (ms)", 0, 500, 100, Color.red);
-        jPanel3 = new BarGraphPanel(bdtt, "dT between pings on Master (ms)", 0, 500, 125, Color.red);
-        jPanel4 = new BarGraphPanel(bdts, "dT between pongs on Slave (ms)", 0, 500, 125, Color.red);
-        jPanel5 = new BarGraphPanel(bdtr, "dT between pongs on Master (ms)", 0, 500, 125, Color.red);
+        jPanel3 = new BarGraphPanel(bdtt, "dT between pings on Master (ms)", 0, 500, 100, Color.red);
+        jPanel4 = new BarGraphPanel(bdts, "dT between pongs on Slave (ms)", -50, 50, 25, Color.red);
+        jPanel5 = new BarGraphPanel(bdtr, "dT between pongs on Master (ms)", -50, 50, 25, Color.red);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -72,7 +74,6 @@ public class TimeSynchronizerFrame extends javax.swing.JFrame implements ITimeSy
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
           if (ts != null) {
               ts.removeLogger(this);
-              ts.removeLogger(tspl);
           }
           ((GraphPanel)jPanel2).stop();
           ((GraphPanel)jPanel3).stop();
@@ -109,7 +110,23 @@ public class TimeSynchronizerFrame extends javax.swing.JFrame implements ITimeSy
     public void timeSyncPong(int delay, int dtt, int dtr, int dts) {
         bping.insertData(delay);
         bdtt.insertData(dtt);
-        bdtr.insertData(dtr);
-        bdts.insertData(dts);
+        bdts.insertData(dts-dtt);
+        bdtr.insertData(dtr-dts);
+    }
+    
+    @Override
+    public void timeSyncReady() {
+    }
+
+    @Override
+    public void timeSyncWrongSequence(int pingSeqNum, int pongSeqNum) {
+    }
+
+    @Override
+    public void timeSyncDtsFilter(int dts) {
+    }
+    
+        @Override
+    public void timeSyncErrorFilter(int error) {
     }
 }
