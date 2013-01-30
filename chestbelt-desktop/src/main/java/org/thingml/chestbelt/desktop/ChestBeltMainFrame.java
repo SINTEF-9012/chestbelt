@@ -43,14 +43,13 @@ import org.thingml.rtsync.core.TimeSynchronizerPrintLogger;
  *
  * @author ffl
  */
-public class ChestBeltMainFrame extends javax.swing.JFrame implements ChestBeltListener, BitRateListemer, TimeSynchronizable {
+public class ChestBeltMainFrame extends javax.swing.JFrame implements ChestBeltListener, BitRateListemer {
 
     ChestBelt belt = null;
     protected GraphBuffer becg = new GraphBuffer(1000);
     BitRateCounter counter = null;
     
-    protected TimeSynchronizer timesync = new TimeSynchronizer(this, 0x3FFF); // 14 bits timestamp (in milliseconds)
-    
+  
     /** Creates new form MainFrame */
     public ChestBeltMainFrame() {
         initComponents();
@@ -808,12 +807,10 @@ public class ChestBeltMainFrame extends javax.swing.JFrame implements ChestBeltL
             total_overrun = 0;
             jTextFieldOver.setText("" + total_overrun + " (0)");
              // start the timesync
-            timesync.start_timesync();
         }
         else { // Disconnect
              try {
                   // start the timesync
-                timesync.stop_timesync();
                 belt.close();
                 belt = null;
                if (serialPort != null) tryToCloseSerialPort();
@@ -938,11 +935,11 @@ private void jTextFieldRefTimeActionPerformed(java.awt.event.ActionEvent evt) {/
     }//GEN-LAST:event_jButton10ActionPerformed
 
     private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
-        
-        TimeSyncFrame f = new TimeSyncFrame(timesync);
-        f.pack();
-        f.setVisible(true);
-        
+        if (belt != null) {
+            TimeSyncFrame f = new TimeSyncFrame(belt.getTimeSynchronizer());
+            f.pack();
+            f.setVisible(true);
+        }
     }//GEN-LAST:event_jButton11ActionPerformed
 
     /**
@@ -1322,23 +1319,9 @@ static {
     public void eMGRMS(int channelA, int channelB, int timestamp) {
         
     }
-    
-    // Time sync implementation:
-    // Forward Ping and Pongs
-    
+
     @Override
     public void fullClockTimeSyncSequence(long value, boolean seconds, int timeSyncSeqNum) {
-        // the value is multiplied by 4 to get a timestamp in ms
-        int ts = (int) (value & 0x0FFF); // get the 12 bits timestamp
-        ts = ts*4; // Put the timestamp in ms (that makes a 14bits timestamp)
         
-        timesync.receive_TimeResponse(timeSyncSeqNum-2, ts);
     }
-
-    @Override
-    public void sendTimeRequest(int seq_num) {
-        if (belt != null) belt.requestCUTime(seq_num+2);
-    }
-
-
 }

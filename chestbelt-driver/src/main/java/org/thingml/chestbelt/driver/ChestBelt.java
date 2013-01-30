@@ -19,19 +19,35 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import org.thingml.rtsync.core.TimeSynchronizable;
+import org.thingml.rtsync.core.TimeSynchronizer;
 
-public class ChestBelt implements Runnable {
+public class ChestBelt implements Runnable, TimeSynchronizable {
 
     protected InputStream in;
     protected OutputStream out;
     
     private Thread rxthread = null;
+    
+    // 12 bits timestamps with a 4ms resolution -> 14bits timestamps in ms -> Max value = 0x3FFF
+    private TimeSynchronizer rtsync = new TimeSynchronizer(this, 0x3FFF);
+    
+    public TimeSynchronizer getTimeSynchronizer() {
+        return rtsync;
+    }
+    
+    public long getEpochTimestamp(int belt_timestamp) {
+        // Mutiply by 4 to get a 14 bits timestamp in ms
+        if (rtsync.isRunning()) return rtsync.getSynchronizedEpochTime(belt_timestamp*4);
+        else return 0;
+    }
 
     public ChestBelt(InputStream in, OutputStream out) {
         this.in = in;
         this.out = out;
         rxthread = new Thread(this);
         rxthread.start();
+        rtsync.start_timesync();
     }
 
     private int msg_size(byte code) {
@@ -62,6 +78,7 @@ public class ChestBelt implements Runnable {
     public void close() {
         
         try {
+            rtsync.stop_timesync();
             terminate = true;
             // Wait up to 3 seconds for the rx thread to die before closing the streams
             rxthread.join(3000); 
@@ -296,9 +313,17 @@ public class ChestBelt implements Runnable {
         int timeSyncSeqNum = ((message[1]-32) & 0x1f);
         boolean timeSync = timeSyncSeqNum != 0;
         //System.out.println("Message[1] = " + message[1] + " timeSyncSeqNum = " + timeSyncSeqNum);
+        
+        if (timeSync) {
+            int ts = (int) (value & 0x0FFF); // get the 12 bits timestamp
+            ts = ts*4; // Put the timestamp in ms (that makes a 14bits timestamp)
+            rtsync.receive_TimeResponse(timeSyncSeqNum-2, ts);
+        }
+        
         for (ChestBeltListener l : listeners) {
-            if (timeSync)
-              l.fullClockTimeSyncSequence(value, seconds, timeSyncSeqNum);
+            if (timeSync) {
+                l.fullClockTimeSyncSequence(value, seconds, timeSyncSeqNum);
+            }
             else
               l.fullClockTimeSync(value, seconds);
         }
@@ -547,5 +572,10 @@ public class ChestBelt implements Runnable {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void sendTimeRequest(int seq_num) {
+        requestCUTime(seq_num+2);
     }
 }

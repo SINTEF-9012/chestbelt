@@ -153,7 +153,7 @@ private void jButtonRecordActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         else return; // abort
     }
     prefs.put("LogFolder", folder.getAbsolutePath());
-    logger = new ChestBeltFileLogger(folder);
+    logger = new ChestBeltFileLogger(folder, belt);
     belt.addChestBeltListener(logger);
     logger.startLogging();
     belt.setLiveDataMode(); // reset the timestamp (hopefully)
