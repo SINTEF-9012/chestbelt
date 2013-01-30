@@ -44,6 +44,12 @@
     
     <dependency>
         <groupId>org.thingml</groupId>
+        <artifactId>rtsync-ui</artifactId>
+        <version>0.9.0-SNAPSHOT</version>
+    </dependency>
+    
+    <dependency>
+        <groupId>org.thingml</groupId>
         <artifactId>rtcharts-swing</artifactId>
         <version>1.3.0-SNAPSHOT</version>
     </dependency>
