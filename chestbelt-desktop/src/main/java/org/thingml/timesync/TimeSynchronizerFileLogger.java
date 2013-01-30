@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.thingml.timesync;
 
 import java.io.File;
@@ -24,6 +20,10 @@ public class TimeSynchronizerFileLogger implements ITimeSynchronizerLogger {
      * ************************************************************************/
     //protected File folder;
     protected boolean logging = false;
+
+    public boolean isLogging() {
+        return logging;
+    }
     protected PrintWriter log;
     
     private SimpleDateFormat timestampFormat = new SimpleDateFormat("HH:mm:ss.SSS");
@@ -34,20 +34,20 @@ public class TimeSynchronizerFileLogger implements ITimeSynchronizerLogger {
         return "TS-" + timestampFormat.format( Calendar.getInstance().getTime());
     }
     
-    private void start_logging(File folder) {
+    public void start_logging(File folder) {
        String sName = createSessionName(); 
        File sFolder = new File(folder, sName);
        sFolder.mkdir();
         try {
-           log = new PrintWriter(new FileWriter(new File(sFolder, "Chestbelt_time.txt")));
-           log.println("Time" + SEPARATOR + "TS" + SEPARATOR + "TMT" + SEPARATOR + "TMR" + SEPARATOR + "delay" + SEPARATOR + "offs" + SEPARATOR + "errorSum" + SEPARATOR + "zeroOffset" + SEPARATOR + "regOffsMs"+ SEPARATOR + "skipped");
+           log = new PrintWriter(new FileWriter(new File(sFolder, "Time_Synch.txt")));
+           log.println("Time" + SEPARATOR + "TS" + SEPARATOR + "TMT" + SEPARATOR + "TMR" + SEPARATOR + "delay" + SEPARATOR + "offs" + SEPARATOR + "errorSum" + SEPARATOR + "zeroOffset" + SEPARATOR + "regOffsMs"+ SEPARATOR + "phase");
            logging = true;
        } catch (IOException ex) {
            Logger.getLogger(org.thingml.chestbelt.desktop.ChestBeltFileLogger.class.getName()).log(Level.SEVERE, null, ex);
        }
     }
     
-    private void stop_logging() {
+    public void stop_logging() {
         if (logging) {
             logging = false;
             log.close();

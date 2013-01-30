@@ -305,11 +305,17 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="End log"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonEndLogActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="jButtonStartLog">
           <Properties>
             <Property name="text" type="java.lang.String" value="Begin log"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonStartLogActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>

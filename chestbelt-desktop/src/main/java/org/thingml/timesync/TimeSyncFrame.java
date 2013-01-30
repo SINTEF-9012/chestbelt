@@ -1,22 +1,35 @@
 package org.thingml.timesync;
 
+import java.io.File;
+import java.util.prefs.Preferences;
+import javax.swing.JFileChooser;
+
 /**
  *
  * @author ffl
  */
 public class TimeSyncFrame extends javax.swing.JFrame implements ITimeSynchronizerLogger {
 
+    JFileChooser chooser = new JFileChooser();
+    Preferences prefs = Preferences.userRoot().node(this.getClass().getName());
+    
     protected TimeSynchronizer ts;
     
     protected TimeSynchronizerPrintLogger tspl = new TimeSynchronizerPrintLogger();
-    
+    protected TimeSynchronizerFileLogger tsfl = new TimeSynchronizerFileLogger();
     /**
      * Creates new form TimeSyncFrame
      */
     public TimeSyncFrame(TimeSynchronizer ts) {
         this.ts = ts;
         ts.addLogger(this);
+        ts.addLogger(tsfl);
         initComponents();
+        chooser.setFileSelectionMode( JFileChooser.DIRECTORIES_ONLY);
+        chooser.setMultiSelectionEnabled(false);
+        jTextFieldLogDir.setText(prefs.get("TSLogFolder", ""));
+        jButtonStartLog.setEnabled(true);
+        jButtonEndLog.setEnabled(false);
         populateFields();
         if (ts.isRunning()) {
             configRunning();
@@ -265,8 +278,18 @@ public class TimeSyncFrame extends javax.swing.JFrame implements ITimeSynchroniz
         });
 
         jButtonEndLog.setText("End log");
+        jButtonEndLog.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonEndLogActionPerformed(evt);
+            }
+        });
 
         jButtonStartLog.setText("Begin log");
+        jButtonStartLog.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonStartLogActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -373,7 +396,12 @@ public class TimeSyncFrame extends javax.swing.JFrame implements ITimeSynchroniz
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonBrowseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBrowseActionPerformed
-        // TODO add your handling code here:
+        File folder = new File(jTextFieldLogDir.getText());
+    if (folder.exists() && folder.isDirectory()) chooser.setSelectedFile(folder);
+    if (chooser.showDialog(this, "OK") == JFileChooser.APPROVE_OPTION) {
+        jTextFieldLogDir.setText(chooser.getSelectedFile().getAbsolutePath());
+        prefs.put("TSLogFolder", folder.getAbsolutePath());
+    }
     }//GEN-LAST:event_jButtonBrowseActionPerformed
 
     private void jCheckBoxConsoleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxConsoleActionPerformed
@@ -423,8 +451,32 @@ public class TimeSyncFrame extends javax.swing.JFrame implements ITimeSynchroniz
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
         ts.removeLogger(tspl);
+        ts.removeLogger(tsfl);
         ts.removeLogger(this);
     }//GEN-LAST:event_formWindowClosed
+
+    private void jButtonStartLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonStartLogActionPerformed
+        File folder = new File(jTextFieldLogDir.getText());
+        if (!folder.exists() || !folder.isDirectory()) {
+            if (chooser.showDialog(this, "OK") == JFileChooser.APPROVE_OPTION) {
+                jTextFieldLogDir.setText(chooser.getSelectedFile().getAbsolutePath());
+                folder = chooser.getSelectedFile();
+            }
+            else return; // abort
+        }
+        prefs.put("TSLogFolder", folder.getAbsolutePath());
+        tsfl.start_logging(folder);
+        jButtonStartLog.setEnabled(false);
+        jButtonEndLog.setEnabled(true);
+    }//GEN-LAST:event_jButtonStartLogActionPerformed
+
+    private void jButtonEndLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEndLogActionPerformed
+        if (tsfl.isLogging()) {
+            tsfl.stop_logging();
+            jButtonStartLog.setEnabled(true);
+            jButtonEndLog.setEnabled(false);
+        }
+    }//GEN-LAST:event_jButtonEndLogActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonBrowse;
