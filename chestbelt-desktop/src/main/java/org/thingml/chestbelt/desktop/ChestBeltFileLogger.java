@@ -128,40 +128,40 @@ public class ChestBeltFileLogger implements ChestBeltListener {
         return "" + System.currentTimeMillis();
     }
     
-    public String calculatedTimeStamp(int belt_timestamp) {
+    public String calculatedAndRawTimeStamp(int belt_timestamp) {
         //return timestampFormat.format( Calendar.getInstance().getTime());
         //return (t+refTime-cbStartTime)*4;
-        return "" + belt.getEpochTimestamp(belt_timestamp) + SEPARATOR + belt_timestamp;
+        return "" + belt.getEpochTimestamp(belt_timestamp) + SEPARATOR + belt_timestamp*4;
     }
 
     @Override
     public void cUSerialNumber(long value, int timestamp) {
-        if (logging) log.println("[SerialNumber]" + SEPARATOR + currentTimeStamp() + SEPARATOR + calculatedTimeStamp(timestamp) + SEPARATOR + value);
+        if (logging) log.println("[SerialNumber]" + SEPARATOR + currentTimeStamp() + SEPARATOR + calculatedAndRawTimeStamp(timestamp) + SEPARATOR + value);
     }
 
     @Override
     public void cUFWRevision(String value, int timestamp) {
-        if (logging) log.println("[FWRevision]" + SEPARATOR + currentTimeStamp() + SEPARATOR + calculatedTimeStamp(timestamp) + SEPARATOR + value);
+        if (logging) log.println("[FWRevision]" + SEPARATOR + currentTimeStamp() + SEPARATOR + calculatedAndRawTimeStamp(timestamp) + SEPARATOR + value);
     }
 
     @Override
     public void batteryStatus(int value, int timestamp) {
-        if (logging) log.println("[Battery]" + SEPARATOR + currentTimeStamp() + SEPARATOR + calculatedTimeStamp(timestamp) + SEPARATOR + value);
+        if (logging) log.println("[Battery]" + SEPARATOR + currentTimeStamp() + SEPARATOR + calculatedAndRawTimeStamp(timestamp) + SEPARATOR + value);
     }
 
     @Override
     public void indication(int value, int timestamp) {
-        if (logging) log.println("[Indication]" + SEPARATOR + currentTimeStamp() + SEPARATOR + calculatedTimeStamp(timestamp) + SEPARATOR + value);
+        if (logging) log.println("[Indication]" + SEPARATOR + currentTimeStamp() + SEPARATOR + calculatedAndRawTimeStamp(timestamp) + SEPARATOR + value);
     }
 
     @Override
     public void status(int value, int timestamp) {
-        if (logging) log.println("[Status]" + SEPARATOR + currentTimeStamp() + SEPARATOR + calculatedTimeStamp(timestamp) + SEPARATOR + value);
+        if (logging) log.println("[Status]" + SEPARATOR + currentTimeStamp() + SEPARATOR + calculatedAndRawTimeStamp(timestamp) + SEPARATOR + value);
     }
 
     @Override
     public void messageOverrun(int value, int timestamp) {
-        if (logging) log.println("[MsgOverrun]" + SEPARATOR + currentTimeStamp() + SEPARATOR + calculatedTimeStamp(timestamp) + SEPARATOR + value);
+        if (logging) log.println("[MsgOverrun]" + SEPARATOR + currentTimeStamp() + SEPARATOR + calculatedAndRawTimeStamp(timestamp) + SEPARATOR + value);
     }
     
     protected long refTime = 0;
@@ -191,12 +191,12 @@ public class ChestBeltFileLogger implements ChestBeltListener {
     public void heartRate(int value, int timestamp) {
         double hr = value/10.0;
         double temp = temperature/10.0;
-        if (logging) phi.println(currentTimeStamp() + SEPARATOR + calculatedTimeStamp(timestamp) + SEPARATOR + numFormat.format(hr) + SEPARATOR + numFormat.format(temp));
+        if (logging) phi.println(currentTimeStamp() + SEPARATOR + calculatedAndRawTimeStamp(timestamp) + SEPARATOR + numFormat.format(hr) + SEPARATOR + numFormat.format(temp));
     }
 
     @Override
     public void heartRateConfidence(int value, int timestamp) {
-        if (logging) log.println("[HeartRateConfidence]" + SEPARATOR + currentTimeStamp() + SEPARATOR + calculatedTimeStamp(timestamp) + SEPARATOR + value);
+        if (logging) log.println("[HeartRateConfidence]" + SEPARATOR + currentTimeStamp() + SEPARATOR + calculatedAndRawTimeStamp(timestamp) + SEPARATOR + value);
     }
 
     private long ecgtimestamp = 0;
@@ -210,7 +210,7 @@ public class ChestBeltFileLogger implements ChestBeltListener {
 
     @Override
     public void eCGSignalQuality(int value, int timestamp) {
-        if (logging) log.println("[ECGSignalQuality]" + SEPARATOR + currentTimeStamp() + SEPARATOR + calculatedTimeStamp(timestamp) + SEPARATOR + value);
+        if (logging) log.println("[ECGSignalQuality]" + SEPARATOR + currentTimeStamp() + SEPARATOR + calculatedAndRawTimeStamp(timestamp) + SEPARATOR + value);
     }
 
     @Override
@@ -243,7 +243,7 @@ public class ChestBeltFileLogger implements ChestBeltListener {
             if (gy == Integer.MIN_VALUE) {
                 gy = value;
                 if (imu_data_ready()) {
-                    imu.println(currentTimeStamp() + SEPARATOR + calculatedTimeStamp(timestamp) + SEPARATOR + A(ax) + SEPARATOR + A(ay) + SEPARATOR + A(az) + SEPARATOR + G(gx) + SEPARATOR + G(gy) + SEPARATOR + G(gz));
+                    imu.println(currentTimeStamp() + SEPARATOR + calculatedAndRawTimeStamp(timestamp) + SEPARATOR + A(ax) + SEPARATOR + A(ay) + SEPARATOR + A(az) + SEPARATOR + G(gx) + SEPARATOR + G(gy) + SEPARATOR + G(gz));
                     imu_data_reset();
                 }
             }
@@ -261,7 +261,7 @@ public class ChestBeltFileLogger implements ChestBeltListener {
             if (gx == Integer.MIN_VALUE) {
                 gx = value;
                 if (imu_data_ready()) {
-                    imu.println(currentTimeStamp() + SEPARATOR + calculatedTimeStamp(timestamp) + SEPARATOR + A(ax) + SEPARATOR + A(ay) + SEPARATOR + A(az) + SEPARATOR + G(gx) + SEPARATOR + G(gy) + SEPARATOR + G(gz));
+                    imu.println(currentTimeStamp() + SEPARATOR + calculatedAndRawTimeStamp(timestamp) + SEPARATOR + A(ax) + SEPARATOR + A(ay) + SEPARATOR + A(az) + SEPARATOR + G(gx) + SEPARATOR + G(gy) + SEPARATOR + G(gz));
                     imu_data_reset();
                 }
             }
@@ -279,7 +279,7 @@ public class ChestBeltFileLogger implements ChestBeltListener {
             if (gz == Integer.MIN_VALUE) {
                 gz = value;
                 if (imu_data_ready()) {
-                    imu.println(currentTimeStamp() + SEPARATOR + calculatedTimeStamp(timestamp) + SEPARATOR + A(ax) + SEPARATOR + A(ay) + SEPARATOR + A(az) + SEPARATOR + G(gx) + SEPARATOR + G(gy) + SEPARATOR + G(gz));
+                    imu.println(currentTimeStamp() + SEPARATOR + calculatedAndRawTimeStamp(timestamp) + SEPARATOR + A(ax) + SEPARATOR + A(ay) + SEPARATOR + A(az) + SEPARATOR + G(gx) + SEPARATOR + G(gy) + SEPARATOR + G(gz));
                     imu_data_reset();
                 }
             }
@@ -297,7 +297,7 @@ public class ChestBeltFileLogger implements ChestBeltListener {
             if (ay == Integer.MIN_VALUE) {
                 ay = value;
                 if (imu_data_ready()) {
-                    imu.println(currentTimeStamp() + SEPARATOR + calculatedTimeStamp(timestamp) + SEPARATOR + A(ax) + SEPARATOR + A(ay) + SEPARATOR + A(az) + SEPARATOR + G(gx) + SEPARATOR + G(gy) + SEPARATOR + G(gz));
+                    imu.println(currentTimeStamp() + SEPARATOR + calculatedAndRawTimeStamp(timestamp) + SEPARATOR + A(ax) + SEPARATOR + A(ay) + SEPARATOR + A(az) + SEPARATOR + G(gx) + SEPARATOR + G(gy) + SEPARATOR + G(gz));
                     imu_data_reset();
                 }
             }
@@ -315,7 +315,7 @@ public class ChestBeltFileLogger implements ChestBeltListener {
             if (az == Integer.MIN_VALUE) {
                 az = value;
                 if (imu_data_ready()) {
-                    imu.println(currentTimeStamp() + SEPARATOR + calculatedTimeStamp(timestamp) + SEPARATOR + A(ax) + SEPARATOR + A(ay) + SEPARATOR + A(az) + SEPARATOR + G(gx) + SEPARATOR + G(gy) + SEPARATOR + G(gz));
+                    imu.println(currentTimeStamp() + SEPARATOR + calculatedAndRawTimeStamp(timestamp) + SEPARATOR + A(ax) + SEPARATOR + A(ay) + SEPARATOR + A(az) + SEPARATOR + G(gx) + SEPARATOR + G(gy) + SEPARATOR + G(gz));
                     imu_data_reset();
                 }
             }
@@ -333,7 +333,7 @@ public class ChestBeltFileLogger implements ChestBeltListener {
             if (ax == Integer.MIN_VALUE) {
                 ax = value;
                 if (imu_data_ready()) {
-                    imu.println(currentTimeStamp() + SEPARATOR + calculatedTimeStamp(timestamp) + SEPARATOR + A(ax) + SEPARATOR + A(ay) + SEPARATOR + A(az) + SEPARATOR + G(gx) + SEPARATOR + G(gy) + SEPARATOR + G(gz));
+                    imu.println(currentTimeStamp() + SEPARATOR + calculatedAndRawTimeStamp(timestamp) + SEPARATOR + A(ax) + SEPARATOR + A(ay) + SEPARATOR + A(az) + SEPARATOR + G(gx) + SEPARATOR + G(gy) + SEPARATOR + G(gz));
                     imu_data_reset();
                 }
             }
@@ -362,7 +362,7 @@ public class ChestBeltFileLogger implements ChestBeltListener {
     @Override
     public void combinedIMU(int ax, int ay, int az, int gx, int gy, int gz, int timestamp) {
         if (logging) {
-            imu.println(currentTimeStamp() + SEPARATOR + calculatedTimeStamp(timestamp) + SEPARATOR + A(ax) + SEPARATOR + A(ay) + SEPARATOR + A(az) + SEPARATOR + G(gx) + SEPARATOR + G(gy) + SEPARATOR + G(gz));
+            imu.println(currentTimeStamp() + SEPARATOR + calculatedAndRawTimeStamp(timestamp) + SEPARATOR + A(ax) + SEPARATOR + A(ay) + SEPARATOR + A(az) + SEPARATOR + G(gx) + SEPARATOR + G(gy) + SEPARATOR + G(gz));
         }
     }
 
@@ -392,14 +392,14 @@ public class ChestBeltFileLogger implements ChestBeltListener {
     @Override
     public void eMGRaw(int value, int timestamp) {
         if (logging) {
-            emg.println(value + SEPARATOR + currentTimeStamp() + SEPARATOR + calculatedTimeStamp(timestamp));
+            emg.println(value + SEPARATOR + currentTimeStamp() + SEPARATOR + calculatedAndRawTimeStamp(timestamp));
         }
     }
 
     @Override
     public void eMGRMS(int channelA, int channelB, int timestamp) {
         if (logging) {
-            rms.println(currentTimeStamp() + SEPARATOR + calculatedTimeStamp(timestamp) + SEPARATOR + channelA + SEPARATOR + channelB);
+            rms.println(currentTimeStamp() + SEPARATOR + calculatedAndRawTimeStamp(timestamp) + SEPARATOR + channelA + SEPARATOR + channelB);
         }
     }
     
