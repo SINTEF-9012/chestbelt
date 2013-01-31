@@ -380,10 +380,13 @@ public class ChestBeltFileLogger implements ChestBeltListener {
     @Override
     public void eMGData(int value) {
         if (logging) {
-            emg.println(value);
+            long ts = belt.getEpochTimestampFromMs(emg_timestamp++);
+            emg.println(value + SEPARATOR + currentTimeStamp() + SEPARATOR + ts + SEPARATOR + emg_timestamp);
         }
     }
 
+    private int emg_timestamp = 0;
+    
     @Override
     public void eMGSignalQuality(int value, int timestamp) {
         
@@ -393,6 +396,7 @@ public class ChestBeltFileLogger implements ChestBeltListener {
     public void eMGRaw(int value, int timestamp) {
         if (logging) {
             emg.println(value + SEPARATOR + currentTimeStamp() + SEPARATOR + calculatedAndRawTimeStamp(timestamp));
+            emg_timestamp = timestamp*4;
         }
     }
 

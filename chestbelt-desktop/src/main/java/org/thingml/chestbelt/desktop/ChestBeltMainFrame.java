@@ -32,7 +32,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.UIManager;
 import org.thingml.rtcharts.swing.*;
-import org.thingml.rtsync.ui.TimeSyncErrorFrame;
+import org.thingml.rtsync.ui.TimeSyncDelayErrorFrame;
 import org.thingml.rtsync.ui.TimeSyncFrame;
 import org.thingml.rtsync.core.TimeSynchronizable;
 import org.thingml.rtsync.core.TimeSynchronizer;

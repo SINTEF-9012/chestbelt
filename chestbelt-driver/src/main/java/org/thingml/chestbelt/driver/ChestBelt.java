@@ -41,6 +41,12 @@ public class ChestBelt implements Runnable, TimeSynchronizable {
         if (rtsync.isRunning()) return rtsync.getSynchronizedEpochTime(belt_timestamp*4);
         else return 0;
     }
+    
+    public long getEpochTimestampFromMs(int ms_timestamp) {
+        // Mutiply by 4 to get a 14 bits timestamp in ms
+        if (rtsync.isRunning()) return rtsync.getSynchronizedEpochTime(ms_timestamp);
+        else return 0;
+    }
 
     public ChestBelt(InputStream in, OutputStream out) {
         this.in = in;
