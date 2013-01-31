@@ -62,7 +62,7 @@ public class ChestBelt implements Runnable, TimeSynchronizable {
         } else if (code == 106 || code == 107 || code == 110 || code == 112 || code == 114 || code == 117 || code == 121) {
             return 6;
         } else if (code == 125) {
-            return 7;
+            return 15;
         }
         else if (code == 120) {
             return 18;
@@ -294,6 +294,17 @@ public class ChestBelt implements Runnable, TimeSynchronizable {
         }
     }
     
+    long decode6byteLong(byte d1, byte d2, byte d3, byte d4, byte d5, byte d6) {
+        long result = 0;
+        result += ((d1 - 32) & 0x3F) << 30;
+        result += ((d2 - 32) & 0x3F) << 24;
+        result += ((d3 - 32) & 0x3F) << 18;
+        result += ((d4 - 32) & 0x3F) << 12;
+        result += ((d5 - 32) & 0x3F) << 6;
+        result += (d6 - 32) & 0x3F;
+        return result;
+    }
+    
     long decode4byteLong(byte d2, byte d3, byte d4, byte d5) {
         long result = 0;
 //        result += ((d1 - 32) & 0x1F) << 24; // dicard bit 29 which is used for something else
@@ -401,11 +412,11 @@ public class ChestBelt implements Runnable, TimeSynchronizable {
     }
     
     synchronized void eMGRMS(byte[] message) {
-        int channelA = ((message[1] - 32) * 64 + (message[2] - 32));
-        int channelB = ((message[3] - 32) * 64 + (message[4] - 32));
-        int timestamp = ((message[5] - 32) * 64 + (message[6] - 32));
+        long channelA = decode6byteLong(message[1], message[2], message[3], message[4], message[5], message[6]);
+        long channelB = decode6byteLong(message[7], message[8], message[9], message[10], message[11], message[12]);
+        int timestamp = ((message[13] - 32) * 64 + (message[14] - 32));
         for (ChestBeltListener l : listeners) {
-            l.eMGRMS(channelA, channelB, timestamp);
+            l.eMGRMS((int)Math.sqrt(channelA), (int)Math.sqrt(channelB), timestamp);
         }
     }
 

@@ -66,8 +66,8 @@ public class EMGGraphForm extends javax.swing.JFrame implements ChestBeltListene
 
         jPanel5 = new javax.swing.JPanel();
         jPanel4 = new LineGraphPanel(bemg, "Raw EMG Value", 0, 4096, 1024, new java.awt.Color(0, 204, 51));
-        jPanel2 = new LineGraphPanel(brmsa, "EMG RMS Value (Belt Channel A)", 0, 2048, 512, new java.awt.Color(0, 204, 51));
-        jPanel3 = new LineGraphPanel(brmsb, "EMG RMS Value (Belt Channel B)", 0, 2048, 512, new java.awt.Color(0, 204, 51));
+        jPanel2 = new LineGraphPanel(brmsa, "EMG RMS Value (Belt Channel A)", 0, 4096, 512, new java.awt.Color(0, 204, 51));
+        jPanel3 = new LineGraphPanel(brmsb, "EMG RMS Value (Belt Channel B)", 0, 4096, 512, new java.awt.Color(0, 204, 51));
         jPanel1 = new BarGraphPanel(bemgrate, "Raw ECG Rate (# val between timestamps)", 0, 200, 50, new java.awt.Color(0, 204, 51));
         jPanel6 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();

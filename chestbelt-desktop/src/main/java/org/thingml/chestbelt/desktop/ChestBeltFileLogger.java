@@ -380,8 +380,11 @@ public class ChestBeltFileLogger implements ChestBeltListener {
     @Override
     public void eMGData(int value) {
         if (logging) {
-            long ts = belt.getEpochTimestampFromMs(emg_timestamp++);
-            emg.println(value + SEPARATOR + currentTimeStamp() + SEPARATOR + ts + SEPARATOR + emg_timestamp);
+            emg.println(value);
+            
+            // This can be used to log the timestamp for each sample but it makes the file really big.
+            // long ts = belt.getEpochTimestampFromMs(emg_timestamp++);
+            // emg.println(value + SEPARATOR + currentTimeStamp() + SEPARATOR + ts + SEPARATOR + emg_timestamp);
         }
     }
 
