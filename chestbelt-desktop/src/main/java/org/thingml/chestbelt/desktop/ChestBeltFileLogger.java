@@ -174,7 +174,8 @@ public class ChestBeltFileLogger implements ChestBeltListener {
         if (request_start) {
             request_start = false;
             startTime = System.currentTimeMillis();
-            ecgtimestamp = 0;
+            ecg_timestamp = 0;
+            emg_timestamp = 0;
             cbStartTime = refTime;
             logging = true;
         }
@@ -199,13 +200,19 @@ public class ChestBeltFileLogger implements ChestBeltListener {
         if (logging) log.println("[HeartRateConfidence]" + SEPARATOR + currentTimeStamp() + SEPARATOR + calculatedAndRawTimeStamp(timestamp) + SEPARATOR + value);
     }
 
-    private long ecgtimestamp = 0;
+    private int ecg_timestamp = 0;
     @Override
     public void eCGData(int value) {
+        ecg_timestamp += 4;
         if (logging) {
-            ecg.println("" + /*currentTimeStamp() + SEPARATOR +*/ ecgtimestamp + SEPARATOR + value);
+            // This can be used to log without timestamp for each sample to keep the file smaller.
+            ecg.println(value);
+            
+            // This can be used to log the timestamp for each sample but it makes the file really big.
+            //long ts = belt.getEpochTimestampFromMs(ecg_timestamp);
+            //ecg.println(value + SEPARATOR + currentTimeStamp() + SEPARATOR + ts + SEPARATOR + ecg_timestamp + SEPARATOR + 0);
         }
-        ecgtimestamp += 4; // 4 ms increment
+
     }
 
     @Override
@@ -215,7 +222,11 @@ public class ChestBeltFileLogger implements ChestBeltListener {
 
     @Override
     public void eCGRaw(int value, int timestamp) {
-        //throw new UnsupportedOperationException("Not supported yet.");
+        ecg_timestamp = timestamp*4;
+        if (logging) {
+            long ts = belt.getEpochTimestampFromMs(ecg_timestamp);
+            ecg.println(value + SEPARATOR + currentTimeStamp() + SEPARATOR + ts + SEPARATOR + ecg_timestamp + SEPARATOR + 1);
+        }
     }
     
     
@@ -379,12 +390,14 @@ public class ChestBeltFileLogger implements ChestBeltListener {
 
     @Override
     public void eMGData(int value) {
+        emg_timestamp +=1;
         if (logging) {
+            // This can be used to log without timestamp for each sample to keep the file smaller.
             emg.println(value);
             
             // This can be used to log the timestamp for each sample but it makes the file really big.
-            // long ts = belt.getEpochTimestampFromMs(emg_timestamp++);
-            // emg.println(value + SEPARATOR + currentTimeStamp() + SEPARATOR + ts + SEPARATOR + emg_timestamp);
+            // long ts = belt.getEpochTimestampFromMs(emg_timestamp); 
+            // emg.println(value + SEPARATOR + currentTimeStamp() + SEPARATOR + ts + SEPARATOR + emg_timestamp + SEPARATOR + 0);
         }
     }
 
@@ -397,9 +410,10 @@ public class ChestBeltFileLogger implements ChestBeltListener {
 
     @Override
     public void eMGRaw(int value, int timestamp) {
+        emg_timestamp = timestamp*4;
         if (logging) {
-            emg.println(value + SEPARATOR + currentTimeStamp() + SEPARATOR + calculatedAndRawTimeStamp(timestamp));
-            emg_timestamp = timestamp*4;
+            long ts = belt.getEpochTimestampFromMs(emg_timestamp);
+            emg.println(value + SEPARATOR + currentTimeStamp() + SEPARATOR + ts + SEPARATOR + emg_timestamp + SEPARATOR + 1);
         }
     }
 
