@@ -77,7 +77,8 @@ public class ChestBeltFileLogger implements ChestBeltListener {
            log.println("# This file contains one line per message received from the Chest Belt.");
            
            ecg = new PrintWriter(new FileWriter(new File(sFolder, "Chestbelt_ecg.txt")));
-           ecg.println("# ECG Data, Raw 12bits ADC values, 250Hz.");
+           //ecg.println("# ECG Data, Raw 12bits ADC values, 250Hz.");
+           ecg.println("Value" + SEPARATOR + "PC_EPOC" + SEPARATOR + "CU_EPOC" + SEPARATOR + "CU_MS_TICK" + SEPARATOR + "Update");
            
            emg = new PrintWriter(new FileWriter(new File(sFolder, "Chestbelt_emg.txt")));
            emg.println("# EMG Data, Raw 12bits ADC values, 1kHz.");
@@ -206,11 +207,11 @@ public class ChestBeltFileLogger implements ChestBeltListener {
         ecg_timestamp += 4;
         if (logging) {
             // This can be used to log without timestamp for each sample to keep the file smaller.
-            ecg.println(value);
+            //ecg.println(value);
             
             // This can be used to log the timestamp for each sample but it makes the file really big.
-            //long ts = belt.getEpochTimestampFromMs(ecg_timestamp);
-            //ecg.println(value + SEPARATOR + currentTimeStamp() + SEPARATOR + ts + SEPARATOR + ecg_timestamp + SEPARATOR + 0);
+            long ts = belt.getEpochTimestampFromMs(ecg_timestamp);
+            ecg.println(value + SEPARATOR + currentTimeStamp() + SEPARATOR + ts + SEPARATOR + ecg_timestamp + SEPARATOR + 0);
         }
 
     }
