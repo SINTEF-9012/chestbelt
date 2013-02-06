@@ -54,11 +54,26 @@ public class ChestBeltFileLogger implements ChestBeltListener {
     protected PrintWriter emg;
     protected PrintWriter rms;
     
+    protected boolean eCGEpoch = false;
+
+    public boolean iseCGEpoch() {
+        return eCGEpoch;
+    }
+    
     private ChestBelt belt;
     
     public ChestBeltFileLogger(File folder, ChestBelt belt) {
         this.belt = belt;
         this.folder = folder;
+        this.eCGEpoch = false;
+        //numFormat.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.US));
+        //imuFormat.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.US));
+    }
+    
+     public ChestBeltFileLogger(File folder, ChestBelt belt, boolean eCGEpoch) {
+        this.belt = belt;
+        this.folder = folder;
+        this.eCGEpoch = eCGEpoch;
         //numFormat.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.US));
         //imuFormat.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.US));
     }
