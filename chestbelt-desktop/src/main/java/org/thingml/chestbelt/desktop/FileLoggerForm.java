@@ -64,6 +64,7 @@ public class FileLoggerForm extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jButtonRecord = new javax.swing.JButton();
         jButtonStop = new javax.swing.JButton();
+        jCheckBoxEpoch = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("ChestBelt File Logger");
@@ -97,6 +98,8 @@ public class FileLoggerForm extends javax.swing.JFrame {
             }
         });
 
+        jCheckBoxEpoch.setText("Log Epoch for ECG and EMG");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -104,13 +107,15 @@ public class FileLoggerForm extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jTextFieldFolder, javax.swing.GroupLayout.DEFAULT_SIZE, 349, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jCheckBoxEpoch)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButtonStop)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButtonRecord)))
@@ -125,9 +130,11 @@ public class FileLoggerForm extends javax.swing.JFrame {
                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTextFieldFolder, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 48, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButtonRecord)
-                    .addComponent(jButtonStop))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButtonRecord)
+                        .addComponent(jButtonStop))
+                    .addComponent(jCheckBoxEpoch, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
 
@@ -153,7 +160,7 @@ private void jButtonRecordActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         else return; // abort
     }
     prefs.put("LogFolder", folder.getAbsolutePath());
-    logger = new ChestBeltFileLogger(folder, belt);
+    logger = new ChestBeltFileLogger(folder, belt, jCheckBoxEpoch.isSelected());
     belt.addChestBeltListener(logger);
     logger.startLogging();
     belt.setLiveDataMode(); // reset the timestamp (hopefully)
@@ -185,6 +192,7 @@ private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButtonRecord;
     private javax.swing.JButton jButtonStop;
+    private javax.swing.JCheckBox jCheckBoxEpoch;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JTextField jTextFieldFolder;
     // End of variables declaration//GEN-END:variables
