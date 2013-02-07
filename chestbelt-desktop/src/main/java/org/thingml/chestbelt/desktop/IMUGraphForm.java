@@ -273,8 +273,4 @@ private void windowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_win
        
     }
     
-    @Override
-    public void fullClockTimeSyncSequence(long value, boolean seconds, int timeSyncSeqNum) {
-        
-    }
 }

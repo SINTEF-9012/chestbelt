@@ -362,9 +362,5 @@ static {
       
     }
     
-    @Override
-    public void fullClockTimeSyncSequence(long value, boolean seconds, int timeSyncSeqNum) {
-        
-    }
 
 }

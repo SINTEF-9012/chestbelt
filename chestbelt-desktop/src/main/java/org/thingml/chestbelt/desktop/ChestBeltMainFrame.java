@@ -1124,6 +1124,7 @@ private void jTextFieldRefTimeActionPerformed(java.awt.event.ActionEvent evt) {/
 	public void referenceClockTime(long value, boolean seconds) {
 		jTextFieldRefTime.setText("" + value);
                 jCheckBox1.setSelected(!seconds);
+		System.out.println("[ReferenceClockTimeSync] " + value + " (" + seconds + ")");
 
 	}
 
@@ -1320,8 +1321,4 @@ static {
         
     }
 
-    @Override
-    public void fullClockTimeSyncSequence(long value, boolean seconds, int timeSyncSeqNum) {
-        
-    }
 }
