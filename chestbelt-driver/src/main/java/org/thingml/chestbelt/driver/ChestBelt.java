@@ -335,14 +335,10 @@ public class ChestBelt implements Runnable, TimeSynchronizable {
             int ts = (int) (value & 0x0FFF); // get the 12 bits timestamp
             ts = ts*4; // Put the timestamp in ms (that makes a 14bits timestamp)
             rtsync.receive_TimeResponse(timeSyncSeqNum-2, ts);
-        }
-        
-        for (ChestBeltListener l : listeners) {
-            if (timeSync) {
-                l.fullClockTimeSyncSequence(value, seconds, timeSyncSeqNum);
-            }
-            else
+        } else {
+            for (ChestBeltListener l : listeners) {
               l.fullClockTimeSync(value, seconds);
+            }
         }
     }
 
@@ -555,7 +551,8 @@ public class ChestBelt implements Runnable, TimeSynchronizable {
     }
 
     public void setLiveDataMode() {
-        sendData(108, 0);
+        sendData(108, 0); /* This is not implemented on CU */
+        System.out.println(" Method setLiveDataMode() is not implemented by CU");
     }
 
     public void setDataMode(ChestBeltMode mode) {

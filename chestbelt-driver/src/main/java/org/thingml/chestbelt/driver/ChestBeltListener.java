@@ -28,7 +28,6 @@ public interface ChestBeltListener {
 		// Time and clock synchronization messages
 		void referenceClockTime(long value, boolean seconds);// 						@code "106";
 		void fullClockTimeSync(long value, boolean seconds);// 						@code "107";
-                void fullClockTimeSyncSequence(long value, boolean seconds, int timeSyncSeqNum);  // Decoded with seqNum
 		
 		// ECG and Heart rate messages
 		void heartRate(int value, int timestamp);//  			@code "104"; //12 bit value in 0.1 bpm, ie 0.0-409.5 bpm
