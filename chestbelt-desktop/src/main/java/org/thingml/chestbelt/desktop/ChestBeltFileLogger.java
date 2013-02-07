@@ -433,6 +433,11 @@ public class ChestBeltFileLogger implements ChestBeltListener {
         
     }
 
+    /**
+     *
+     * @param value
+     * @param timestamp
+     */
     @Override
     public void eMGRaw(int value, int timestamp) {
         emg_timestamp = timestamp*4;
