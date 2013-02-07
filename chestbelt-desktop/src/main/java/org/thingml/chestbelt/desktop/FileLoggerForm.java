@@ -163,8 +163,10 @@ private void jButtonRecordActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     logger = new ChestBeltFileLogger(folder, belt, jCheckBoxEpoch.isSelected());
     belt.addChestBeltListener(logger);
     logger.startLogging();
-    belt.setLiveDataMode(); // reset the timestamp (hopefully)
-    belt.requestCUTime(1);
+    // Removed steffend... not used by CU ... 
+    // belt.setLiveDataMode(); // reset the timestamp (hopefully)
+    // Removed steffend... do not use this during operation due to timeshift until next full update.
+    // belt.requestCUTime(1);
     jButtonRecord.setEnabled(false);
     jButtonStop.setEnabled(true);
 }//GEN-LAST:event_jButtonRecordActionPerformed
