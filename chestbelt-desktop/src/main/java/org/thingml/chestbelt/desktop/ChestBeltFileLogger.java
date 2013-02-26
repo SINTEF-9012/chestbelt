@@ -54,6 +54,7 @@ public class ChestBeltFileLogger implements ChestBeltListener {
     protected PrintWriter emg;
     protected PrintWriter rms;
     
+    
     protected boolean eCGEpoch = false;
 
     public boolean iseCGEpoch() {
