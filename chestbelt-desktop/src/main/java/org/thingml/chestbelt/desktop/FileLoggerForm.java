@@ -29,6 +29,7 @@ import org.thingml.chestbelt.driver.ChestBelt;
 import java.io.File;
 import java.util.prefs.Preferences;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -48,6 +49,7 @@ public class FileLoggerForm extends javax.swing.JFrame {
         chooser.setFileSelectionMode( JFileChooser.DIRECTORIES_ONLY);
         chooser.setMultiSelectionEnabled(false);
         jTextFieldFolder.setText(prefs.get("LogFolder", ""));
+        
     }
 
     /** This method is called from within the constructor to
@@ -156,7 +158,8 @@ private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
     if (folder.exists() && folder.isDirectory()) chooser.setSelectedFile(folder);
     if (chooser.showDialog(this, "OK") == JFileChooser.APPROVE_OPTION) {
         jTextFieldFolder.setText(chooser.getSelectedFile().getAbsolutePath());
-        prefs.put("LogFolder", folder.getAbsolutePath());
+        if (chooser.getSelectedFile().exists() && chooser.getSelectedFile().isDirectory())
+            prefs.put("LogFolder", folder.getAbsolutePath());
     }
 }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -164,6 +167,10 @@ private void jButtonRecordActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     File folder = new File(jTextFieldFolder.getText());
     if (!folder.exists() || !folder.isDirectory()) {
         if (chooser.showDialog(this, "OK") == JFileChooser.APPROVE_OPTION) {
+            if (!chooser.getSelectedFile().exists() || !chooser.getSelectedFile().isDirectory()) {
+                JOptionPane.showMessageDialog(null, "Please select an existing folder.", "Folder not found", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             jTextFieldFolder.setText(chooser.getSelectedFile().getAbsolutePath());
             folder = chooser.getSelectedFile();
         }
