@@ -60,4 +60,6 @@ public interface ChestBeltListener {
 		void skinTemperature(int value, int timestamp);//  	@code "116";
 		
                 void connectionLost();
+                
+                void referenceClockTimeSync(int timeSyncSeqNum, long value); // @code "107"; as well as fullClockTimeSync but with the timesync bit set
 }

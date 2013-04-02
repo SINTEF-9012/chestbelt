@@ -1330,5 +1330,10 @@ static {
     public void eMGRMS(int channelA, int channelB, int timestamp) {
         
     }
+    
+    @Override
+    public void referenceClockTimeSync(int timeSyncSeqNum, long value) {
+        
+    }
 
 }

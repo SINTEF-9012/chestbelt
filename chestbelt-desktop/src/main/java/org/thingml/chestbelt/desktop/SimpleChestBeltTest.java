@@ -362,5 +362,9 @@ static {
       
     }
     
+    @Override
+    public void referenceClockTimeSync(int timeSyncSeqNum, long value) {
+        
+    }
 
 }

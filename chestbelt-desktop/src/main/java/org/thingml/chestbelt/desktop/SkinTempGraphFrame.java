@@ -225,5 +225,10 @@ private void windowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_win
     public void eMGRMS(int channelA, int channelB, int timestamp) {
        
     }
+    
+    @Override
+    public void referenceClockTimeSync(int timeSyncSeqNum, long value) {
+        
+    }
 
 }

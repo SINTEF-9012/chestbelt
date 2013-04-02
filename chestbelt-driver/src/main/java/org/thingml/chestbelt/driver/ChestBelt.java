@@ -335,6 +335,9 @@ public class ChestBelt implements Runnable, TimeSynchronizable {
             int ts = (int) (value & 0x0FFF); // get the 12 bits timestamp
             ts = ts*4; // Put the timestamp in ms (that makes a 14bits timestamp)
             rtsync.receive_TimeResponse(timeSyncSeqNum-2, ts);
+            for (ChestBeltListener l : listeners) {
+              l.referenceClockTimeSync(timeSyncSeqNum-2, ts);
+            }
         } else {
             for (ChestBeltListener l : listeners) {
               l.fullClockTimeSync(value, seconds);

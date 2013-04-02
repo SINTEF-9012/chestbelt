@@ -462,6 +462,11 @@ public class ChestBeltFileLogger implements ChestBeltListener {
             rms.println(currentTimeStamp() + SEPARATOR + calculatedAndRawTimeStamp(timestamp) + SEPARATOR + channelA + SEPARATOR + channelB);
         }
     }
+
+    @Override
+    public void referenceClockTimeSync(int timeSyncSeqNum, long value) {
+        
+    }
     
     
 }

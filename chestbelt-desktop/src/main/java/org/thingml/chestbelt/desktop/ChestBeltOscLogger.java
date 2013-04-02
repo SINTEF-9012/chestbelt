@@ -178,5 +178,10 @@ public class ChestBeltOscLogger  implements ChestBeltListener {
     public void connectionLost() {
     }
     
+    @Override
+    public void referenceClockTimeSync(int timeSyncSeqNum, long value) {
+        
+    }
+    
 }
 
