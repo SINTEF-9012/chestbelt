@@ -57,6 +57,11 @@ public class ChestBeltMainFrame extends javax.swing.JFrame implements ChestBeltL
         
     }
     
+    public void disableConnection() {
+        setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
+        jButton1.setEnabled(false);
+    }
+    
     private SerialPort serialPort = null;
     
     public ChestBelt connectChestBelt() {
@@ -789,10 +794,8 @@ public class ChestBeltMainFrame extends javax.swing.JFrame implements ChestBeltL
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        if (belt == null) { // Connect
-            belt = connectChestBelt();
-            if (belt == null) return;
+    public void do_connect(ChestBelt b) {
+            belt = b;
             belt.addChestBeltListener(this);
             ((GraphPanel)jPanelECG).start();
             counter = new BitRateCounter(belt);
@@ -806,6 +809,13 @@ public class ChestBeltMainFrame extends javax.swing.JFrame implements ChestBeltL
             jCheckBox1.setSelected(false);
             total_overrun = 0;
             jTextFieldOver.setText("" + total_overrun + " (0)");
+    }
+    
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        if (belt == null) { // Connect
+            belt = connectChestBelt();
+            if (belt == null) return;
+            do_connect(belt);
              // start the timesync
         }
         else { // Disconnect
