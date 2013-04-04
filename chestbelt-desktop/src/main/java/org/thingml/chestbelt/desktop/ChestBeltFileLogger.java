@@ -83,19 +83,8 @@ public class ChestBeltFileLogger implements ChestBeltListener {
         return logging;
     }
     
-    public void startLogging() {
-       String sName = createSessionName(); 
-       File sFolder = new File(folder, sName);
-       
-       // To avoid overwriting an exiting folder (in case several logs are created at the same time)
-       int i=1;
-       while (sFolder.exists()) {
-           sFolder = new File(folder, sName + "-" + i);
-           i++;
-       }
-       
-       sFolder.mkdir();
-       imu_data_reset();
+    public void startLoggingInFolder(File sFolder) {
+        imu_data_reset();
        try {
            log = new PrintWriter(new FileWriter(new File(sFolder, "Chestbelt_log.txt")));
            log.println("# This file contains one line per message received from the Chest Belt.");
@@ -121,6 +110,21 @@ public class ChestBeltFileLogger implements ChestBeltListener {
        }
        temperature = 0;
        request_start = true;
+    }
+    
+    public void startLogging() {
+       String sName = createSessionName(); 
+       File sFolder = new File(folder, sName);
+       
+       // To avoid overwriting an exiting folder (in case several logs are created at the same time)
+       int i=1;
+       while (sFolder.exists()) {
+           sFolder = new File(folder, sName + "-" + i);
+           i++;
+       }
+       
+       sFolder.mkdir();
+       startLoggingInFolder(sFolder);
     }
     
     public void stopLogging() {
