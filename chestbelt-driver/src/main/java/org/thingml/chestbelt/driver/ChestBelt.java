@@ -578,6 +578,10 @@ public class ChestBelt implements Runnable, TimeSynchronizable {
         sendData(116, 32 + value);
     }
 
+    public void sendAlert(int level) {
+        sendData(97, 32 + level);
+    }
+    
     protected void sendData(int code, int value) {
         try {
             // send the code
