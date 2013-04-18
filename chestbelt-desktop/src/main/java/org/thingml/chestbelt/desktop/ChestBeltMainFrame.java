@@ -1085,6 +1085,7 @@ private void jTextFieldRefTimeActionPerformed(java.awt.event.ActionEvent evt) {/
         @Override
 	public void cUSerialNumber(long value, int timestamp) {
             jTextFieldSID.setText(""+value);
+             setTitle("ChestUnit [" + value + "]");
 	}
 
 	@Override
