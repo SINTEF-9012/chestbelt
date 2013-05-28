@@ -30,7 +30,13 @@ public class ChestBeltOscLogger  implements ChestBeltListener {
 
     private ChestBelt belt;
     private String probeName;
-    private VirtualOscComm vOsc;
+    private VirtualOscComm vOscEcg;
+    private VirtualOscComm vOscAccX;
+    private VirtualOscComm vOscAccY;
+    private VirtualOscComm vOscAccZ;
+    private VirtualOscComm vOscGyrX;
+    private VirtualOscComm vOscGyrY;
+    private VirtualOscComm vOscGyrZ;
     private boolean logging = false;
 
     
@@ -42,16 +48,40 @@ public class ChestBeltOscLogger  implements ChestBeltListener {
     
     public void startLogging() {
            
-           vOsc = new VirtualOscComm();
-           vOsc.open_communication("127.0.0.1", this.probeName);
+           vOscEcg = new VirtualOscComm();
+           vOscEcg.open_communication("127.0.0.1", this.probeName + ".Ecg");
+           vOscAccX = new VirtualOscComm();
+           vOscAccX.open_communication("127.0.0.1", this.probeName + ".AccX");
+           vOscAccY = new VirtualOscComm();
+           vOscAccY.open_communication("127.0.0.1", this.probeName + ".AccY");
+           vOscAccZ = new VirtualOscComm();
+           vOscAccZ.open_communication("127.0.0.1", this.probeName + ".AccZ");
+           vOscGyrX = new VirtualOscComm();
+           vOscGyrX.open_communication("127.0.0.1", this.probeName + ".GyrX");
+           vOscGyrY = new VirtualOscComm();
+           vOscGyrY.open_communication("127.0.0.1", this.probeName + ".GyrY");
+           vOscGyrZ = new VirtualOscComm();
+           vOscGyrZ.open_communication("127.0.0.1", this.probeName + ".GyrZ");
            logging = true;
     }
     
     public void stopLogging() {
         if (logging ) {
             logging = false;
-            vOsc.close_communication();
-            vOsc = null;
+            vOscEcg.close_communication();
+            vOscEcg = null;
+            vOscAccX.close_communication();
+            vOscAccX = null;
+            vOscAccY.close_communication();
+            vOscAccY = null;
+            vOscAccZ.close_communication();
+            vOscAccZ = null;
+            vOscGyrX.close_communication();
+            vOscGyrX = null;
+            vOscGyrY.close_communication();
+            vOscGyrY = null;
+            vOscGyrZ.close_communication();
+            vOscGyrZ = null;
         }
     }
     
@@ -103,7 +133,7 @@ public class ChestBeltOscLogger  implements ChestBeltListener {
         ecg_timestamp += 4;
         if (logging) {
             long ts = belt.getEpochTimestampFromMs(ecg_timestamp);
-            vOsc.send_data(ts, value);
+            vOscEcg.send_ts_data(ts, value);
         }
 
     }
@@ -118,7 +148,7 @@ public class ChestBeltOscLogger  implements ChestBeltListener {
         //System.out.println("ecgRaw" + logging);
         if (logging) {
             long ts = belt.getEpochTimestampFromMs(ecg_timestamp);
-            vOsc.send_data(ts, value);
+            vOscEcg.send_ts_data(ts, value);
         }
     }
     
@@ -166,8 +196,24 @@ public class ChestBeltOscLogger  implements ChestBeltListener {
     public void rawActivityLevel(int value, int timestamp) {
     }
 
+    protected float A(float v) {
+        return (v * 0.004f);
+    }
+    protected float G(float v) {
+        return (v * 0.069565f);
+    }
+    
     @Override
     public void combinedIMU(int ax, int ay, int az, int gx, int gy, int gz, int timestamp) {
+        if (logging) {
+            long ts = belt.getEpochTimestamp(timestamp);
+            vOscAccX.send_ts_data(ts, A(ax));
+            vOscAccY.send_ts_data(ts, A(ay));
+            vOscAccZ.send_ts_data(ts, A(az));
+            vOscGyrX.send_ts_data(ts, G(gx));
+            vOscGyrY.send_ts_data(ts, G(gy));
+            vOscGyrZ.send_ts_data(ts, G(gz));
+        }
     }
 
     @Override

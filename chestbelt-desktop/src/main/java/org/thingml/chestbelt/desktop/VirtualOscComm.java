@@ -34,7 +34,6 @@ public class VirtualOscComm {
     protected DatagramSocket udpSocket;
     protected InetAddress IPAddress;
     protected int IPPort;
-    protected boolean udpLog = false;
     protected int channel = -1;
     protected String displayName;
     
@@ -49,7 +48,6 @@ public class VirtualOscComm {
            this.IPAddress = InetAddress.getByName(address);
            //IPAddress = InetAddress.getByName("127.0.0.1");
            this.IPPort = 30000;
-           this.udpLog = true;  
 
            // Request new channelnumber from remote
            String sendStr = new String("$" + " 1 " + displayName);
@@ -95,11 +93,10 @@ public class VirtualOscComm {
        }
        this.udpSocket.close();
        this.udpSocket = null;
-       this.udpLog = false;    
        this.channel = -1;
     }
     
-    public void send_data(long valEpoc, float val) {
+    public void send_ts_data(long valEpoc, float val) {
         
         if( this.channel >= 0) {
             long txEpoc = System.currentTimeMillis();
@@ -118,5 +115,24 @@ public class VirtualOscComm {
         }
     }
     
-    
+    public void send_data(float val) {
+        
+        if( this.channel >= 0) {
+            long txEpoc = System.currentTimeMillis();
+            // System.out.println("txEpoc = " + txEpoc);
+            // System.out.println("valEpoc = " + valEpoc);
+            String sendStr = new String("#" + " " + this.channel + " " + txEpoc + " " + txEpoc + " " + val);
+            //System.out.println(sendStr);
+            byte[] sendData;
+            sendData = sendStr.getBytes();
+            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, this.IPAddress, this.IPPort);
+            try {
+                this.udpSocket.send(sendPacket);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
 }
+

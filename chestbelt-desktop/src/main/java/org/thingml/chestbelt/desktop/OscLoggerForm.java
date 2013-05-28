@@ -11,7 +11,7 @@ import org.thingml.chestbelt.driver.ChestBelt;
  * @author steffend
  */
 public class OscLoggerForm extends javax.swing.JFrame {
-    protected String probeName;
+    protected String unitName;
     protected ChestBeltOscLogger logger;
     protected ChestBelt belt;
 
@@ -52,7 +52,7 @@ public class OscLoggerForm extends javax.swing.JFrame {
             }
         });
 
-        jTextFieldProbeName.setText("<enterProbeName>");
+        jTextFieldProbeName.setText("<enterUnitName>");
         jTextFieldProbeName.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextFieldProbeNameActionPerformed(evt);
@@ -99,8 +99,8 @@ public class OscLoggerForm extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonStopActionPerformed
 
     private void jButtonStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonStartActionPerformed
-        probeName = jTextFieldProbeName.getText();
-        logger = new ChestBeltOscLogger(probeName, belt);
+        unitName = jTextFieldProbeName.getText();
+        logger = new ChestBeltOscLogger(unitName, belt);
         belt.addChestBeltListener(logger);
         logger.startLogging();
         jButtonStart.setEnabled(false);
@@ -108,8 +108,8 @@ public class OscLoggerForm extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonStartActionPerformed
 
     private void jTextFieldProbeNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldProbeNameActionPerformed
-        probeName = jTextFieldProbeName.getText();
-        System.out.println("Text changed to - " + probeName);
+        unitName = jTextFieldProbeName.getText();
+        System.out.println("Text changed to - " + unitName);
     }//GEN-LAST:event_jTextFieldProbeNameActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
