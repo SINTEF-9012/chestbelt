@@ -207,7 +207,7 @@ private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event
 }//GEN-LAST:event_formWindowClosed
 
     private void jButtonOscLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonOscLogActionPerformed
-        OscLoggerForm form = new OscLoggerForm(belt);
+        UDPLoggerForm form = new UDPLoggerForm(belt);
         form.pack();
         form.setVisible(true);
     }//GEN-LAST:event_jButtonOscLogActionPerformed

@@ -94,6 +94,9 @@ public class ChestBelt implements Runnable, TimeSynchronizable {
         catch(Exception e) {
             e.printStackTrace();
         }
+        for (ChestBeltListener l : listeners) {
+            l.connectionLost();
+        }
     }
     
     private boolean terminate = false;

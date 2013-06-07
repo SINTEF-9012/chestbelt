@@ -10,15 +10,15 @@ import org.thingml.chestbelt.driver.ChestBelt;
  *
  * @author steffend
  */
-public class OscLoggerForm extends javax.swing.JFrame {
+public class UDPLoggerForm extends javax.swing.JFrame {
     protected String unitName;
-    protected ChestBeltOscLogger logger;
+    protected ChestBeltUDPLogger logger;
     protected ChestBelt belt;
 
     /**
-     * Creates new form OscLoggerForm
+     * Creates new form UDPLoggerForm
      */
-    public OscLoggerForm(ChestBelt b) {
+    public UDPLoggerForm(ChestBelt b) {
         this.belt = b;
         initComponents();
     }
@@ -100,7 +100,7 @@ public class OscLoggerForm extends javax.swing.JFrame {
 
     private void jButtonStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonStartActionPerformed
         unitName = jTextFieldProbeName.getText();
-        logger = new ChestBeltOscLogger(unitName, belt);
+        logger = new ChestBeltUDPLogger(unitName, belt);
         belt.addChestBeltListener(logger);
         logger.startLogging();
         jButtonStart.setEnabled(false);

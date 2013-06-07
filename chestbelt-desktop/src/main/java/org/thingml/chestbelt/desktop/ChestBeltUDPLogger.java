@@ -26,7 +26,7 @@ import org.thingml.chestbelt.driver.ChestBeltListener;
  *
  * @author steffend
  */
-public class ChestBeltOscLogger  implements ChestBeltListener {
+public class ChestBeltUDPLogger  implements ChestBeltListener {
 
     private ChestBelt belt;
     private String probeName;
@@ -40,7 +40,7 @@ public class ChestBeltOscLogger  implements ChestBeltListener {
     private boolean logging = false;
 
     
-    public ChestBeltOscLogger(String probeName, ChestBelt belt) {
+    public ChestBeltUDPLogger(String probeName, ChestBelt belt) {
         this.belt = belt;
         this.probeName = probeName;
         this.logging = false;
@@ -222,6 +222,7 @@ public class ChestBeltOscLogger  implements ChestBeltListener {
 
     @Override
     public void connectionLost() {
+        stopLogging();
     }
     
     @Override
