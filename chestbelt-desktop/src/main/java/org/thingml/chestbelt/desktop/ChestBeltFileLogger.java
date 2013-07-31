@@ -109,6 +109,7 @@ public class ChestBeltFileLogger implements ChestBeltListener {
            Logger.getLogger(ChestBeltFileLogger.class.getName()).log(Level.SEVERE, null, ex);
        }
        temperature = 0;
+       heartrate = 0;
        request_start = true;
     }
     
@@ -221,12 +222,10 @@ public class ChestBeltFileLogger implements ChestBeltListener {
         if (logging) log.println("[FullClock]" + SEPARATOR + currentTimeStamp() + SEPARATOR + value);
     }
 
-    private DecimalFormat numFormat = new DecimalFormat("##.0");
+    private int heartrate = 0;
     @Override
     public void heartRate(int value, int timestamp) {
-        double hr = value/10.0;
-        double temp = temperature/10.0;
-        if (logging) phi.println(currentTimeStamp() + SEPARATOR + calculatedAndRawTimeStamp(timestamp) + SEPARATOR + numFormat.format(hr) + SEPARATOR + numFormat.format(temp));
+        heartrate = value;
     }
 
     @Override
@@ -413,10 +412,14 @@ public class ChestBeltFileLogger implements ChestBeltListener {
         }
     }
 
+    private DecimalFormat numFormat = new DecimalFormat("##.0");
     private int temperature = 0;
     @Override
     public void skinTemperature(int value, int timestamp) {
         temperature = value;
+        double hr = heartrate/10.0;
+        double temp = temperature/10.0;
+        if (logging) phi.println(currentTimeStamp() + SEPARATOR + calculatedAndRawTimeStamp(timestamp) + SEPARATOR + numFormat.format(hr) + SEPARATOR + numFormat.format(temp));
     }
 
     @Override
