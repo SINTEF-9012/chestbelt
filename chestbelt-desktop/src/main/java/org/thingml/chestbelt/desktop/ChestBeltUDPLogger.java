@@ -30,13 +30,14 @@ public class ChestBeltUDPLogger  implements ChestBeltListener {
 
     private ChestBelt belt;
     private String probeName;
-    private VirtualOscComm vOscEcg;
-    private VirtualOscComm vOscAccX;
-    private VirtualOscComm vOscAccY;
-    private VirtualOscComm vOscAccZ;
-    private VirtualOscComm vOscGyrX;
-    private VirtualOscComm vOscGyrY;
-    private VirtualOscComm vOscGyrZ;
+    private UDPOscComm vOscEcg;
+//    private UDPOscComm vOscEcgTsDiff;
+    private UDPOscComm vOscAccX;
+    private UDPOscComm vOscAccY;
+    private UDPOscComm vOscAccZ;
+    private UDPOscComm vOscGyrX;
+    private UDPOscComm vOscGyrY;
+    private UDPOscComm vOscGyrZ;
     private boolean logging = false;
 
     
@@ -48,19 +49,21 @@ public class ChestBeltUDPLogger  implements ChestBeltListener {
     
     public void startLogging() {
            
-           vOscEcg = new VirtualOscComm();
+           vOscEcg = new UDPOscComm();
            vOscEcg.open_communication("127.0.0.1", this.probeName + ".Ecg");
-           vOscAccX = new VirtualOscComm();
+//           vOscEcgTsDiff = new UDPOscComm();
+//           vOscEcgTsDiff.open_communication("127.0.0.1", this.probeName + ".EcgTsDiff");
+           vOscAccX = new UDPOscComm();
            vOscAccX.open_communication("127.0.0.1", this.probeName + ".AccX");
-           vOscAccY = new VirtualOscComm();
+           vOscAccY = new UDPOscComm();
            vOscAccY.open_communication("127.0.0.1", this.probeName + ".AccY");
-           vOscAccZ = new VirtualOscComm();
+           vOscAccZ = new UDPOscComm();
            vOscAccZ.open_communication("127.0.0.1", this.probeName + ".AccZ");
-           vOscGyrX = new VirtualOscComm();
+           vOscGyrX = new UDPOscComm();
            vOscGyrX.open_communication("127.0.0.1", this.probeName + ".GyrX");
-           vOscGyrY = new VirtualOscComm();
+           vOscGyrY = new UDPOscComm();
            vOscGyrY.open_communication("127.0.0.1", this.probeName + ".GyrY");
-           vOscGyrZ = new VirtualOscComm();
+           vOscGyrZ = new UDPOscComm();
            vOscGyrZ.open_communication("127.0.0.1", this.probeName + ".GyrZ");
            logging = true;
     }
@@ -70,6 +73,8 @@ public class ChestBeltUDPLogger  implements ChestBeltListener {
             logging = false;
             vOscEcg.close_communication();
             vOscEcg = null;
+//            vOscEcgTsDiff.close_communication();
+//            vOscEcg = vOscEcgTsDiff;
             vOscAccX.close_communication();
             vOscAccX = null;
             vOscAccY.close_communication();
@@ -133,7 +138,9 @@ public class ChestBeltUDPLogger  implements ChestBeltListener {
         ecg_timestamp += 4;
         if (logging) {
             long ts = belt.getEpochTimestampFromMs(ecg_timestamp);
+//            long rxEpoc = System.currentTimeMillis();
             vOscEcg.send_ts_data(ts, value);
+//            vOscEcgTsDiff.send_ts_data(ts, rxEpoc-ts);
         }
 
     }
@@ -148,7 +155,9 @@ public class ChestBeltUDPLogger  implements ChestBeltListener {
         //System.out.println("ecgRaw" + logging);
         if (logging) {
             long ts = belt.getEpochTimestampFromMs(ecg_timestamp);
+//            long rxEpoc = System.currentTimeMillis();
             vOscEcg.send_ts_data(ts, value);
+//            vOscEcgTsDiff.send_ts_data(ts, rxEpoc-ts);
         }
     }
     
