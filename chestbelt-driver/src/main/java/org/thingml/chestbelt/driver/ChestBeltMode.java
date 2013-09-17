@@ -18,9 +18,10 @@ package org.thingml.chestbelt.driver;
 import java.util.Hashtable;
 
 public enum ChestBeltMode {
+	EMGRawCh2 (28),
 	RawGyroMode (29),
 	Extracted(30),
-	FullECG(31),
+	FullECG_EMGRawCh1(31),
 	Raw(32),
 	Test(33),
 	RawAccelerometer(34);
@@ -29,9 +30,10 @@ public enum ChestBeltMode {
         
         public static ChestBeltMode fromCode(int code) {
             switch(code) {
+                case 28: return ChestBeltMode.EMGRawCh2;
                 case 29: return ChestBeltMode.RawGyroMode;
                 case 30: return ChestBeltMode.Extracted;
-                case 31: return ChestBeltMode.FullECG;
+                case 31: return ChestBeltMode.FullECG_EMGRawCh1;
                 case 32: return ChestBeltMode.Raw;
                 case 33: return ChestBeltMode.Test;
                 case 34: return ChestBeltMode.RawAccelerometer;

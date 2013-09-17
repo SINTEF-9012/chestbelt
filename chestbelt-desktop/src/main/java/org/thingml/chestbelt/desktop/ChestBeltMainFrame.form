@@ -666,12 +666,12 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jComboBoxMode" min="-2" pref="134" max="-2" attributes="0"/>
+                  <Component id="jComboBoxMode" min="-2" pref="177" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jButton4" min="-2" max="-2" attributes="1"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jButton3" min="-2" max="-2" attributes="1"/>
-                  <EmptySpace pref="247" max="32767" attributes="0"/>
+                  <EmptySpace pref="273" max="32767" attributes="0"/>
                   <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jComboBoxBTInt" min="-2" max="-2" attributes="0"/>

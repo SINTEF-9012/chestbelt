@@ -552,12 +552,12 @@ public class ChestBeltMainFrame extends javax.swing.JFrame implements ChestBeltL
                 .addContainerGap()
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jComboBoxMode, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jComboBoxMode, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 247, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 273, Short.MAX_VALUE)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jComboBoxBTInt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1140,7 +1140,7 @@ private void jTextFieldRefTimeActionPerformed(java.awt.event.ActionEvent evt) {/
                 jLabelActivity.setIcon(ACTIVITY[value-10]);
                 jTextFieldActTime.setText("" + timestamp);  
             }
-            else if (value >=29 && value <=34) {
+            else if (value >=28 && value <=34) {
                 //jComboBoxMode.setSelectedItem(ChestBeltMode.fromCode(value));
                 System.out.println("Indication : " + value);
             }
