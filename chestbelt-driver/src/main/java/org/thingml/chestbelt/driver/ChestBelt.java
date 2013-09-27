@@ -121,7 +121,13 @@ public class ChestBelt implements Runnable, TimeSynchronizable {
                     if (c > 95) {
                         // check if it was something in the buffer
                         if (msg_index != 0) {
-                            System.err.println("ChestBelt: Received incomplete message (code = " + code + ").");
+                            System.err.println("ChestBelt: Received incomplete message (code = " + code + " len = " + msg_index + ") Expected len = " + target_length);
+                            System.err.print("ChestBelt: Msg [ ");
+                            for (int ix = 0; ix < msg_index; ix++) {
+                                System.err.print(message[ix] + " ");
+                            }
+                            System.err.println("]");
+                            System.err.println("New message staring has code = " + c);
                         }
 
                         code = c;
@@ -583,6 +589,16 @@ public class ChestBelt implements Runnable, TimeSynchronizable {
 
     public void sendAlert(int level) {
         sendData(97, 32 + level);
+    }
+    
+    public void sendRmsWinPramsCh1(int size, int rate) {
+        int param = (size*8) + rate;
+        sendData(118, 32 + param);
+    }
+    
+    public void sendRmsWinPramsCh2(int size, int rate) {
+        int param = (size*8) + rate;
+        sendData(119, 32 + param);
     }
     
     protected void sendData(int code, int value) {

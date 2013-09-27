@@ -687,6 +687,11 @@ public class ChestBeltMainFrame extends javax.swing.JFrame implements ChestBeltL
 
         jComboBoxAlertLevel.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "0", "1", "2" }));
         jComboBoxAlertLevel.setSelectedIndex(2);
+        jComboBoxAlertLevel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBoxAlertLevelActionPerformed(evt);
+            }
+        });
 
         jButtonAlert.setText("Alert");
         jButtonAlert.addActionListener(new java.awt.event.ActionListener() {
@@ -977,6 +982,10 @@ private void jTextFieldRefTimeActionPerformed(java.awt.event.ActionEvent evt) {/
             belt.sendAlert(level);
         }
     }//GEN-LAST:event_jButtonAlertActionPerformed
+
+    private void jComboBoxAlertLevelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxAlertLevelActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBoxAlertLevelActionPerformed
 
     /**
      * @param args the command line arguments
