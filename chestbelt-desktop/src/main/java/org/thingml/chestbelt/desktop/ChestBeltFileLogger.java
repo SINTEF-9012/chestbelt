@@ -90,14 +90,19 @@ public class ChestBeltFileLogger implements ChestBeltListener {
            log.println("# This file contains one line per message received from the Chest Belt.");
            
            ecg = new PrintWriter(new FileWriter(new File(sFolder, "Chestbelt_ecg.txt")));
-           //ecg.println("# ECG Data, Raw 12bits ADC values, 250Hz.");
-           ecg.println("Value" + SEPARATOR + "PC_EPOC" + SEPARATOR + "CU_EPOC" + SEPARATOR + "CU_MS_TICK" + SEPARATOR + "Update");
+           if (!eCGEpoch)
+               ecg.println("# ECG Data, Raw 12bits ADC values, 250Hz.");
+           else
+               ecg.println("Value" + SEPARATOR + "RXTime" + SEPARATOR + "Corrtime" + SEPARATOR + "RawTime" + SEPARATOR + "Update");
            
            emg = new PrintWriter(new FileWriter(new File(sFolder, "Chestbelt_emg.txt")));
-           emg.println("# EMG Data, Raw 12bits ADC values, 1kHz.");
+           if (!eCGEpoch)
+               emg.println("# EMG Data, Raw 12bits ADC values, 1kHz.");
+           else
+               emg.println("Value" + SEPARATOR + "RXTime" + SEPARATOR + "Corrtime" + SEPARATOR + "RawTime" + SEPARATOR + "Update");
            
            rms = new PrintWriter(new FileWriter(new File(sFolder, "Chestbelt_emg_rms.txt")));
-           rms.println("# EMG RMS Values for channel A and B, 12bits values, 10Hz.");
+           rms.println("RXTime" + SEPARATOR + "CorrTime" + SEPARATOR + "RawTime" + SEPARATOR + "RmsChA" + SEPARATOR + "RmsChB");
            
            imu = new PrintWriter(new FileWriter(new File(sFolder, "Chestbelt_imu.txt")));
            imu.println("RXTime" + SEPARATOR + "CorrTime" + SEPARATOR + "RawTime" + SEPARATOR + "AX" + SEPARATOR + "AY" + SEPARATOR + "AZ" + SEPARATOR + "GX" + SEPARATOR + "GY" + SEPARATOR + "GZ");
@@ -398,10 +403,10 @@ public class ChestBeltFileLogger implements ChestBeltListener {
     private DecimalFormat imuFormat = new DecimalFormat("0.00000");
     
     protected String A(int v) {
-        return imuFormat.format(v * 0.004);
+        return imuFormat.format(v * 0.0039); // Changed from 0.004
     }
     protected String G(int v) {
-        return imuFormat.format(v * 0.069565);
+        return imuFormat.format(v * 0.07); // Changed from 0.069565
     }
     
 
