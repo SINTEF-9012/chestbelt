@@ -44,9 +44,9 @@ public class ChestBeltFileLogger implements ChestBeltListener {
     
     protected File folder;
     protected boolean logging = false;
-    protected boolean request_start = false;
-    protected long startTime = 0;
-    protected long cbStartTime = 0;
+    //protected boolean request_start = false;
+    //protected long startTime = 0;
+    //protected long cbStartTime = 0;
     protected PrintWriter log;
     protected PrintWriter ecg;
     protected PrintWriter imu;
@@ -69,6 +69,7 @@ public class ChestBeltFileLogger implements ChestBeltListener {
         this.eCGEpoch = false;
         //numFormat.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.US));
         //imuFormat.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.US));
+        belt.getSerialNumber();
     }
     
      public ChestBeltFileLogger(File folder, ChestBelt belt, boolean eCGEpoch) {
@@ -115,7 +116,8 @@ public class ChestBeltFileLogger implements ChestBeltListener {
        }
        temperature = 0;
        heartrate = 0;
-       request_start = true;
+       //request_start = true;
+       logging = true;
     }
     
     public void startLogging() {
@@ -134,9 +136,10 @@ public class ChestBeltFileLogger implements ChestBeltListener {
     }
     
     public void stopLogging() {
-        if (logging || request_start) {
+        //if (logging || request_start) {
+        if (logging) {
             logging = false;
-            request_start = false;
+            //request_start = false;
             log.close();
             ecg.close();
             imu.close();
@@ -201,24 +204,24 @@ public class ChestBeltFileLogger implements ChestBeltListener {
         if (logging) log.println("[MsgOverrun]" + SEPARATOR + currentTimeStamp() + SEPARATOR + calculatedAndRawTimeStamp(timestamp) + SEPARATOR + value);
     }
     
-    protected long refTime = 0;
-    protected boolean inSeconds = true;
+    //protected long refTime = 0;
+    //protected boolean inSeconds = true;
 
     @Override
     public void referenceClockTime(long value, boolean seconds) {
         // This function needs to be rewritten. 
         //   Do we need the old clock system?
         //   Apart from the old clock there is only the handling of "logging" and printing to log.
-        refTime = value;
-        inSeconds = seconds;
-        if (request_start) {
-            request_start = false;
-            startTime = System.currentTimeMillis();
+        //refTime = value;
+        //inSeconds = seconds;
+        //if (request_start) {
+        //    request_start = false;
+        //    startTime = System.currentTimeMillis();
             // Removed to avoid interference with old time signals. ecg_timestamp = 0;
             // Removed to avoid interference with old time signals. emg_timestamp = 0;
-            cbStartTime = refTime;
-            logging = true;
-        }
+        //    cbStartTime = refTime;
+        //    logging = true;
+        //}
         if (logging) log.println("[RefClock]" + SEPARATOR + currentTimeStamp() + SEPARATOR + value);
     }
 
@@ -468,11 +471,13 @@ public class ChestBeltFileLogger implements ChestBeltListener {
         }
     }
 
+    //int rmsCount = 0;
     @Override
     public void eMGRMS(int channelA, int channelB, int timestamp) {
         if (logging) {
             rms.println(currentTimeStamp() + SEPARATOR + calculatedAndRawTimeStamp(timestamp) + SEPARATOR + channelA + SEPARATOR + channelB);
         }
+        //System.err.println("eMGRMS(" + name + ") #" + rmsCount++ + logging);
     }
 
     @Override
