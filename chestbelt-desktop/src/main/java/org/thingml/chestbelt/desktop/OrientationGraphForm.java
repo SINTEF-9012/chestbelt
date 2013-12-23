@@ -19,9 +19,9 @@
  */
 
 /*
- * IMUGraphForm.java
+ * ECGGraphForm.java
  *
- * Created on 1 juil. 2012, 15:40:14
+ * Created on 1 juil. 2012, 16:48:35
  */
 package org.thingml.chestbelt.desktop;
 
@@ -29,46 +29,45 @@ import org.thingml.chestbelt.driver.ChestBelt;
 import org.thingml.chestbelt.driver.ChestBeltListener;
 import java.awt.Color;
 import org.thingml.rtcharts.swing.*;
+import static java.lang.Math.atan2;
+import static java.lang.Math.round;
+import static java.lang.Math.sqrt;
 
 /**
  *
  * @author franck
  */
-public class IMUGraphForm extends javax.swing.JFrame implements ChestBeltListener {
+public class OrientationGraphForm extends javax.swing.JFrame implements ChestBeltListener, OrientationCalculatorListener {
 
-    protected static final int BUFFER_SIZE = 250;
-    protected static final int AMAX = 500;
-    protected static final int AMINOR = 200;
-    protected static final int GMAX = 1800;
-    protected static final int GMINOR = 500;
-    protected static final Color ACOLOR = new java.awt.Color(255, 204, 0);
-    protected static final Color GCOLOR = new java.awt.Color(255, 153, 0);
+    protected static final Color OCOLOR = new java.awt.Color(255, 153, 0);
+    protected static final int XMINOR = 50;
+    protected static final int YMINOR = 30;
     
     
-    protected GraphBuffer bax = new GraphBuffer(BUFFER_SIZE);
-    protected GraphBuffer bay = new GraphBuffer(BUFFER_SIZE);
-    protected GraphBuffer baz = new GraphBuffer(BUFFER_SIZE);
-    protected GraphBuffer bgx = new GraphBuffer(BUFFER_SIZE);
-    protected GraphBuffer bgy = new GraphBuffer(BUFFER_SIZE);
-    protected GraphBuffer bgz = new GraphBuffer(BUFFER_SIZE);
+    protected GraphBuffer xbuffer = new GraphBuffer(200);
+    protected GraphBuffer ybuffer = new GraphBuffer(200);
+    protected GraphBuffer zbuffer = new GraphBuffer(200);
+    
+    //private int longitudinalAccelerationComponent; 
+    //private int lateralAccelerationComponent; 
+    //private int verticalAccelerationComponent; 
     
     protected ChestBelt belt;
+    protected OrientationCalculator orientationCalculator;    
     
-    /** Creates new form IMUGraphForm */
-    public IMUGraphForm(ChestBelt b) {
-        this.belt = b;
-        if (b != null) b.addChestBeltListener(this);
+    public OrientationGraphForm(ChestBelt b, OrientationCalculator orientationCalculator) {
+        //this.belt = b;
+        //if (b != null) b.addChestBeltListener(this);
+        this.orientationCalculator = orientationCalculator;
+        orientationCalculator.addOrientationCalculatorListener(this);
         initComponents();
-
         ((GraphPanel)jPanel1).start();
         ((GraphPanel)jPanel2).start();
-        ((GraphPanel)jPanel3).start();
         ((GraphPanel)jPanel4).start();
-        ((GraphPanel)jPanel5).start();
-        ((GraphPanel)jPanel6).start();
-       
-
         
+      //  longitudinalAccelerationComponent = 0;
+       // lateralAccelerationComponent = 0;
+        //verticalAccelerationComponent = 0;
     }
 
     /** This method is called from within the constructor to
@@ -80,27 +79,21 @@ public class IMUGraphForm extends javax.swing.JFrame implements ChestBeltListene
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new BarGraphPanel(bax, "Accelerometer X", -AMAX, AMAX, AMINOR, ACOLOR);
-        jPanel2 = new BarGraphPanel(bay, "Accelerometer Y", -AMAX, AMAX, AMINOR, ACOLOR);
-        jPanel3 = new BarGraphPanel(baz, "Accelerometer Z", -AMAX, AMAX, AMINOR, ACOLOR);
-        jPanel4 = new BarGraphPanel(bgx, "Gyroscope X", -GMAX, GMAX, GMINOR, GCOLOR);
-        jPanel5 = new BarGraphPanel(bgy, "Gyroscope Y", -GMAX, GMAX, GMINOR, GCOLOR);
-        jPanel6 = new BarGraphPanel(bgz, "Gyroscope Z", -GMAX, GMAX, GMINOR, GCOLOR);
+        jPanel1 = new LineGraphPanel(xbuffer, "rotation around longitudinal axis (deg)", -180, 180, YMINOR, XMINOR, OCOLOR);
+        jPanel2 = new LineGraphPanel(ybuffer, "rotation around lateral axis (deg)", -180, 180, YMINOR, XMINOR, OCOLOR);
+        jPanel4 = new LineGraphPanel(zbuffer, "rotation z (deg)", -180, 180, YMINOR, XMINOR, OCOLOR);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("ChestBelt IMU Graphs");
+        setTitle("ChestBelt Heart Rate and ECG Graphs");
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosed(java.awt.event.WindowEvent evt) {
-                IMUGraphForm.this.windowClosed(evt);
+                OrientationGraphForm.this.windowClosed(evt);
             }
         });
         getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.PAGE_AXIS));
         getContentPane().add(jPanel1);
         getContentPane().add(jPanel2);
-        getContentPane().add(jPanel3);
         getContentPane().add(jPanel4);
-        getContentPane().add(jPanel5);
-        getContentPane().add(jPanel6);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -109,21 +102,11 @@ private void windowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_win
     if (belt != null) belt.removeChestBeltListener(this);
     ((GraphPanel)jPanel1).stop();
     ((GraphPanel)jPanel2).stop();
-    ((GraphPanel)jPanel3).stop();
     ((GraphPanel)jPanel4).stop();
-    ((GraphPanel)jPanel5).stop();
-    ((GraphPanel)jPanel6).stop();
 }//GEN-LAST:event_windowClosed
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
-    // End of variables declaration//GEN-END:variables
-
+    
+    
     @Override
     public void cUSerialNumber(long value, int timestamp) {
         //throw new UnsupportedOperationException("Not supported yet.");
@@ -190,43 +173,36 @@ private void windowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_win
     }
 
     @Override
-	public void gyroPitch(int value, int timestamp) {
-            //jTextFieldGy.setText(""+value);
-            bgy.insertData(value);
-	}
+    public void gyroPitch(int value, int timestamp) {
+        //throw new UnsupportedOperationException("Not supported yet.");
+    }
 
-	@Override
-	public void gyroRoll(int value, int timestamp) {
-           //jTextFieldGx.setText(""+value);
-            bgx.insertData(value);
-	}
+    @Override
+    public void gyroRoll(int value, int timestamp) {
+        //throw new UnsupportedOperationException("Not supported yet.");
+    }
 
-	@Override
-	public void gyroYaw(int value, int timestamp) {
-            //jTextFieldGz.setText(""+value);
-            bgz.insertData(value);
+    @Override
+    public void gyroYaw(int value, int timestamp) {
+        //throw new UnsupportedOperationException("Not supported yet.");
+    }
 
-	}
+    @Override
+    public void accLateral(int value, int timestamp) {
+        //throw new UnsupportedOperationException("Not supported yet.");
+    }
 
-	@Override
-	public void accLateral(int value, int timestamp) {
-           // jTextFieldAy.setText(""+value);
-            bay.insertData(value);
-	}
+    @Override
+    public void accLongitudinal(int value, int timestamp) {
+        //throw new UnsupportedOperationException("Not supported yet.");
+        
+    }
 
-	@Override
-	public void accLongitudinal(int value, int timestamp) {
-            //jTextFieldAz.setText(""+value);
-            baz.insertData(value);
-
-	}
-
-	@Override
-	public void accVertical(int value, int timestamp) {
-            //jTextFieldAx.setText(""+value);
-            bax.insertData(value);
-
-	}
+    @Override
+    public void accVertical(int value, int timestamp) {
+        //throw new UnsupportedOperationException("Not supported yet.");
+        
+    }
 
     @Override
     public void rawActivityLevel(int value, int timestamp) {
@@ -235,18 +211,19 @@ private void windowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_win
 
     @Override
     public void combinedIMU(int ax, int ay, int az, int gx, int gy, int gz, int timestamp) {
-        bax.insertData(ax);
-        bay.insertData(ay);
-        baz.insertData(az);
-        bgx.insertData(gx);
-        bgy.insertData(gy);
-        bgz.insertData(gz);
+
     }
 
     @Override
     public void skinTemperature(int value, int timestamp) {
         //throw new UnsupportedOperationException("Not supported yet.");
     }
+    
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel4;
+    // End of variables declaration//GEN-END:variables
 
     @Override
     public void connectionLost() {
@@ -255,7 +232,7 @@ private void windowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_win
 
     @Override
     public void eMGData(int value) {
-       
+        
     }
 
     @Override
@@ -270,12 +247,27 @@ private void windowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_win
 
     @Override
     public void eMGRMS(int channelA, int channelB, int timestamp) {
-       
+        
     }
-    
     @Override
     public void referenceClockTimeSync(int timeSyncSeqNum, long value) {
         
     }
 
+    @Override
+    public void orientation(int[] orientationArray) {
+        int phiDeg;
+        int rhoDeg;
+        int thetaDeg;
+        phiDeg = orientationArray[0];
+        rhoDeg = orientationArray[1];
+        thetaDeg = orientationArray[2];
+        
+        
+        xbuffer.insertData(phiDeg);
+        ybuffer.insertData(rhoDeg);
+        zbuffer.insertData(thetaDeg);
+    }
+    
+    
 }

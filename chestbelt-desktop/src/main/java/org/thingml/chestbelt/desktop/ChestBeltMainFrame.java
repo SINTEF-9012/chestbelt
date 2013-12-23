@@ -48,13 +48,13 @@ public class ChestBeltMainFrame extends javax.swing.JFrame implements ChestBeltL
     ChestBelt belt = null;
     protected GraphBuffer becg = new GraphBuffer(1000);
     BitRateCounter counter = null;
+    OrientationCalculator orientationCalculator = null;
     
   
     /** Creates new form MainFrame */
     public ChestBeltMainFrame() {
         initComponents();
         setLocationRelativeTo(null);
-        
     }
     
     public void disableConnection() {
@@ -178,6 +178,7 @@ public class ChestBeltMainFrame extends javax.swing.JFrame implements ChestBeltL
         jButton10 = new javax.swing.JButton();
         jComboBoxAlertLevel = new javax.swing.JComboBox();
         jButtonAlert = new javax.swing.JButton();
+        jButton12 = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItemUDPConnect = new javax.swing.JMenuItem();
@@ -700,6 +701,13 @@ public class ChestBeltMainFrame extends javax.swing.JFrame implements ChestBeltL
             }
         });
 
+        jButton12.setText("Orientation");
+        jButton12.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton12ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -716,6 +724,8 @@ public class ChestBeltMainFrame extends javax.swing.JFrame implements ChestBeltL
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jComboBoxAlertLevel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton12)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton9)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton10)
@@ -735,7 +745,8 @@ public class ChestBeltMainFrame extends javax.swing.JFrame implements ChestBeltL
                         .addComponent(jComboBoxAlertLevel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jCheckBox1)
                         .addComponent(jTextFieldRefTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel5))
+                        .addComponent(jLabel5)
+                        .addComponent(jButton12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jButton7)))
@@ -805,7 +816,7 @@ public class ChestBeltMainFrame extends javax.swing.JFrame implements ChestBeltL
                     .addComponent(jPanel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -904,7 +915,7 @@ private void jComboBoxBTIntActionPerformed(java.awt.event.ActionEvent evt) {//GE
 
 private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
     if (belt != null) {
-        FileLoggerForm form = new FileLoggerForm(belt);
+        FileLoggerForm form = new FileLoggerForm(belt, orientationCalculator);
         form.pack();
         form.setVisible(true);
     }
@@ -987,6 +998,13 @@ private void jTextFieldRefTimeActionPerformed(java.awt.event.ActionEvent evt) {/
         // TODO add your handling code here:
     }//GEN-LAST:event_jComboBoxAlertLevelActionPerformed
 
+    private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed
+        if (orientationCalculator==null)  orientationCalculator = new OrientationCalculator(belt);
+        OrientationGraphForm orientationgraphform = new OrientationGraphForm(belt,orientationCalculator);
+        orientationgraphform.setSize(600, 600);
+        orientationgraphform.setVisible(true);        
+    }//GEN-LAST:event_jButton12ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1022,6 +1040,7 @@ private void jTextFieldRefTimeActionPerformed(java.awt.event.ActionEvent evt) {/
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton11;
+    private javax.swing.JButton jButton12;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;

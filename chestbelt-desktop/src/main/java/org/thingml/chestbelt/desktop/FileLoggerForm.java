@@ -41,10 +41,23 @@ public class FileLoggerForm extends javax.swing.JFrame {
     Preferences prefs = Preferences.userRoot().node(this.getClass().getName());
     ChestBelt belt;
     ChestBeltFileLogger logger;
+    OrientationCalculator orientationCalculator = null;
     
-    /** Creates new form FileLoggerForm */
+    
+    
     public FileLoggerForm(ChestBelt b) {
         this.belt = b;
+        initComponents();
+        chooser.setFileSelectionMode( JFileChooser.DIRECTORIES_ONLY);
+        chooser.setMultiSelectionEnabled(false);
+        jTextFieldFolder.setText(prefs.get("LogFolder", ""));
+        
+    }
+    
+    public FileLoggerForm(ChestBelt b, OrientationCalculator orientationCalculator) {
+        this.belt = b;
+        if (orientationCalculator==null)  orientationCalculator = new OrientationCalculator(belt);
+        this.orientationCalculator = orientationCalculator;
         initComponents();
         chooser.setFileSelectionMode( JFileChooser.DIRECTORIES_ONLY);
         chooser.setMultiSelectionEnabled(false);
@@ -179,6 +192,8 @@ private void jButtonRecordActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     prefs.put("LogFolder", folder.getAbsolutePath());
     logger = new ChestBeltFileLogger(folder, belt, jCheckBoxEpoch.isSelected());
     belt.addChestBeltListener(logger);
+    if (orientationCalculator != null) orientationCalculator.addOrientationCalculatorListener(logger);
+        
     logger.startLogging();
     // Removed steffend... not used by CU ... 
     // belt.setLiveDataMode(); // reset the timestamp (hopefully)

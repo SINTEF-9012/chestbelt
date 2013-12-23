@@ -37,7 +37,7 @@ import org.thingml.chestbelt.driver.ChestBelt;
  *
  * @author ffl
  */
-public class ChestBeltFileLogger implements ChestBeltListener {
+public class ChestBeltFileLogger implements ChestBeltListener, OrientationCalculatorListener {
     
     private SimpleDateFormat timestampFormat = new SimpleDateFormat("HH:mm:ss.SSS");
     private String SEPARATOR = "\t";
@@ -53,6 +53,7 @@ public class ChestBeltFileLogger implements ChestBeltListener {
     protected PrintWriter phi;
     protected PrintWriter emg;
     protected PrintWriter rms;
+    protected PrintWriter orientation;
     
     
     protected boolean eCGEpoch = false;
@@ -111,6 +112,9 @@ public class ChestBeltFileLogger implements ChestBeltListener {
            phi = new PrintWriter(new FileWriter(new File(sFolder, "Chestbelt_phi.txt")));
            phi.println("RXTime" + SEPARATOR + "CorrTime" + SEPARATOR + "RawTime" + SEPARATOR + "Heart Rate (BPM)" + SEPARATOR + "Temperature (°C)");
            
+           orientation = new PrintWriter(new FileWriter(new File(sFolder, "Chestbelt_orientation.txt")));
+           orientation.println("RXTime" + SEPARATOR + "CorrTime" + SEPARATOR + "RawTime" + SEPARATOR + "Heart Rate (BPM)" + SEPARATOR + "Pitch" + SEPARATOR + "Roll");
+           
        } catch (IOException ex) {
            Logger.getLogger(ChestBeltFileLogger.class.getName()).log(Level.SEVERE, null, ex);
        }
@@ -146,12 +150,14 @@ public class ChestBeltFileLogger implements ChestBeltListener {
             phi.close();
             rms.close();
             emg.close();
+            orientation.close();
             log = null;
             ecg = null;
             imu = null;
             phi = null;
             rms = null;
             emg = null;
+            orientation = null;
         }
     }
     
@@ -484,6 +490,16 @@ public class ChestBeltFileLogger implements ChestBeltListener {
     public void referenceClockTimeSync(int timeSyncSeqNum, long value) {
         
     }
-    
+
+    @Override
+    public void orientation(int[] orientationArray) {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        int phiDegInt = orientationArray[0];
+        int rhoDegInt = orientationArray[1];
+        int timestamp = 0;
+        if (logging) {
+            orientation.println(currentTimeStamp() + SEPARATOR + calculatedAndRawTimeStamp(timestamp) + SEPARATOR + phiDegInt + SEPARATOR + rhoDegInt);
+        }
+    }
     
 }

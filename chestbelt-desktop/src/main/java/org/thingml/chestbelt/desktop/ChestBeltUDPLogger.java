@@ -238,6 +238,6 @@ public class ChestBeltUDPLogger  implements ChestBeltListener {
     public void referenceClockTimeSync(int timeSyncSeqNum, long value) {
         
     }
-    
+
 }
 

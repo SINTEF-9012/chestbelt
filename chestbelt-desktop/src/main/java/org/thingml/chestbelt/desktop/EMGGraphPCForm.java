@@ -430,5 +430,5 @@ private void windowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_win
     public void referenceClockTimeSync(int timeSyncSeqNum, long value) {
         
     }
-    
+
 }
