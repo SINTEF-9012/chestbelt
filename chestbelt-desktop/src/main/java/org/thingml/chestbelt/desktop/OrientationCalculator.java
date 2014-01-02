@@ -36,9 +36,23 @@ public class OrientationCalculator implements ChestBeltListener {
     private int lateralAccelerationComponent; 
     private int verticalAccelerationComponent; 
     
-    private int phiDegInt;
-    private int rhoDegInt;
-    private int thetaDegInt;
+    private double phiDeg;
+    private double rhoDeg;
+    private double thetaDeg;
+    
+    // Short moving average filter
+    private final MovingAverageFilter phiDegAvg = new MovingAverageFilter(4);
+    private final MovingAverageFilter rhoDegAvg = new MovingAverageFilter(4);
+    private final MovingAverageFilter thetaDegAvg = new MovingAverageFilter(4);
+    
+    // Long moving average filter
+    private final MovingAverageFilter phiDegAvgLong = new MovingAverageFilter(33);
+    private final MovingAverageFilter rhoDegAvgLong = new MovingAverageFilter(33);
+    private final MovingAverageFilter thetaDegAvgLong = new MovingAverageFilter(33);
+    
+    private long previousTimeMillis;
+    
+    private int timestamp;
     
     protected ChestBelt belt;
     private ArrayList<OrientationCalculatorListener> listeners = new ArrayList<OrientationCalculatorListener>();
@@ -46,13 +60,6 @@ public class OrientationCalculator implements ChestBeltListener {
     public OrientationCalculator(ChestBelt b){
         this.belt = b;
         if (b != null) b.addChestBeltListener(this);
-
-        longitudinalAccelerationComponent = 0;
-        lateralAccelerationComponent = 0;
-        verticalAccelerationComponent = 0;
-        phiDegInt = 0;
-        rhoDegInt = 0;
-        thetaDegInt = 0;
     }
 
     public void addOrientationCalculatorListener(OrientationCalculatorListener l) {
@@ -165,21 +172,20 @@ public class OrientationCalculator implements ChestBeltListener {
 
    @Override
     public void accLateral(int value, int timestamp) {
-        //throw new UnsupportedOperationException("Not supported yet.");
         lateralAccelerationComponent = value;
     }
 
     @Override
     public void accLongitudinal(int value, int timestamp) {
-        //throw new UnsupportedOperationException("Not supported yet.");
         longitudinalAccelerationComponent = value;
+        this.timestamp = timestamp;
         calculateOrientation();
+        updateAverage();
         sendDataToListeners();
     }
 
     @Override
     public void accVertical(int value, int timestamp) {
-        //throw new UnsupportedOperationException("Not supported yet.");
         verticalAccelerationComponent = value;
     }
 
@@ -208,7 +214,7 @@ public class OrientationCalculator implements ChestBeltListener {
         //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-
+    
     private void calculateOrientation(){
         // Implementation of equations on p. 4 of "Tilt Sensing Using Linear 
         // Accelerometers", Kimberly Tuck, AN3461, Rev. 2, 06/2007
@@ -216,42 +222,64 @@ public class OrientationCalculator implements ChestBeltListener {
         double y = lateralAccelerationComponent;
         double z = verticalAccelerationComponent;
         
-        
-        // Calculate angle between longitudinal axis (normal to chest, pointing outwards)
-        // and horizontal plane
-        double phiRad;
-        double phiDeg;
-        phiRad = atan2(y,sqrt(x*x + z*z));
-        phiDeg = round(Math.toDegrees(phiRad));
-                
-        
         // Calculate angle between lateral axis (extening outwards from right 
         // side of body) and the horizontal plane 
+        double phiRad;
+        phiRad = atan2(y,sqrt(x*x + z*z));
+        phiDeg = Math.toDegrees(phiRad);
+                      
+        // Calculate angle between longitudinal axis (normal to chest, pointing outwards)
+        // and horizontal plane
         double rhoRad;
-        double rhoDeg;
         rhoRad = atan2(x,sqrt(y*y + z*z));
-        rhoDeg = round(Math.toDegrees(rhoRad));
+        rhoDeg = Math.toDegrees(rhoRad);
         
         // Calculate angle between vertical axis (extening through torso 
         // outwards from the top) and gravity vector
         double thetaRad;
-        double thetaDeg;
         thetaRad = atan2(sqrt(y*y + x*x),z);
-        thetaDeg = round(Math.toDegrees(thetaRad));
+        thetaDeg = Math.toDegrees(thetaRad);
         
-        phiDegInt = (int) phiDeg;
-        rhoDegInt = (int) rhoDeg;
-        thetaDegInt = (int) thetaDeg;
-        //xbuffer.insertData((int) x);
-        //ybuffer.insertData((int) y);
-        //zbuffer.insertData((int) z);
     }
     
-    private void sendDataToListeners(){
-        int[] orientationArray =  {phiDegInt, rhoDegInt, thetaDegInt};
+    private void updateAverage(){
+        // The short moving average
+        phiDegAvg.add(phiDeg);
+        rhoDegAvg.add(rhoDeg);
+        thetaDegAvg.add(thetaDeg);
         
+        // The long moving average
+        phiDegAvgLong.add(phiDeg);
+        rhoDegAvgLong.add(rhoDeg);
+        thetaDegAvgLong.add(thetaDeg);
+    }
+            
+    
+    private void sendDataToListeners(){
+        int[] orientationArray =  {(int) round(phiDeg), (int) round(rhoDeg), (int) round(thetaDeg)};
+        int[] avgOrientationArray = new int[3];
+        int[] avgOrientationLongArray = new int[3];
+                
         for (OrientationCalculatorListener l : listeners) {
-            l.orientation(orientationArray);
+            l.orientation(orientationArray,timestamp);
         }
+        
+        // send data to logger no faster than once per second
+        long currentTimeMillis = System.currentTimeMillis();
+        if(currentTimeMillis-previousTimeMillis>999){
+            avgOrientationArray[0] = (int) round(phiDegAvg.getAverage());
+            avgOrientationArray[1] = (int) round(rhoDegAvg.getAverage());
+            avgOrientationArray[2] = (int) round(thetaDegAvg.getAverage());
+            avgOrientationLongArray[0] = (int) round(phiDegAvgLong.getAverage());
+            avgOrientationLongArray[1] = (int) round(rhoDegAvgLong.getAverage());
+            avgOrientationLongArray[2] = (int) round(thetaDegAvgLong.getAverage());
+            for (OrientationCalculatorListener l : listeners) {
+                l.logOrientation( avgOrientationArray, avgOrientationLongArray, timestamp );
+            }
+            previousTimeMillis = currentTimeMillis;
+        }          
+            
+            
+        
     }
 }

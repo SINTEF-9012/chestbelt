@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import static java.lang.Math.round;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
@@ -55,6 +56,8 @@ public class ChestBeltFileLogger implements ChestBeltListener, OrientationCalcul
     protected PrintWriter rms;
     protected PrintWriter orientation;
     
+    // Parameters used for logging of orientation file
+    private long startTimeMillis = 0; 
     
     protected boolean eCGEpoch = false;
 
@@ -113,7 +116,9 @@ public class ChestBeltFileLogger implements ChestBeltListener, OrientationCalcul
            phi.println("RXTime" + SEPARATOR + "CorrTime" + SEPARATOR + "RawTime" + SEPARATOR + "Heart Rate (BPM)" + SEPARATOR + "Temperature (°C)");
            
            orientation = new PrintWriter(new FileWriter(new File(sFolder, "Chestbelt_orientation.txt")));
-           orientation.println("RXTime" + SEPARATOR + "CorrTime" + SEPARATOR + "RawTime" + SEPARATOR + "Heart Rate (BPM)" + SEPARATOR + "Pitch" + SEPARATOR + "Roll");
+           orientation.println("Time (s)" + SEPARATOR + "Heart Rate (BPM)" + SEPARATOR + "Activity Level (0-3)" + SEPARATOR + "Pitch Filtered (Deg)" + SEPARATOR + "Roll Filtered (Deg)" + SEPARATOR + "Pitch Raw (Deg)" + SEPARATOR + "Roll Raw(Deg)");
+           startTimeMillis = System.currentTimeMillis();
+       
            
        } catch (IOException ex) {
            Logger.getLogger(ChestBeltFileLogger.class.getName()).log(Level.SEVERE, null, ex);
@@ -195,8 +200,10 @@ public class ChestBeltFileLogger implements ChestBeltListener, OrientationCalcul
         if (logging) log.println("[Battery]" + SEPARATOR + currentTimeStamp() + SEPARATOR + calculatedAndRawTimeStamp(timestamp) + SEPARATOR + value);
     }
 
+    private int activityLevel = 0;
     @Override
     public void indication(int value, int timestamp) {
+        activityLevel = value-10;
         if (logging) log.println("[Indication]" + SEPARATOR + currentTimeStamp() + SEPARATOR + calculatedAndRawTimeStamp(timestamp) + SEPARATOR + value);
     }
 
@@ -492,14 +499,25 @@ public class ChestBeltFileLogger implements ChestBeltListener, OrientationCalcul
     }
 
     @Override
-    public void orientation(int[] orientationArray) {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        int phiDegInt = orientationArray[0];
-        int rhoDegInt = orientationArray[1];
-        int timestamp = 0;
+    public void logOrientation(int[] orientationRaw, int[] orientationFiltered, int timestamp) {
+        int phiDeg = orientationRaw[0];
+        int rhoDeg = orientationRaw[1];
+        int phiDegFilt = orientationFiltered[0];
+        int rhoDegFilt = orientationFiltered[1];
+        
+        double hr = heartrate/10.0;
+        long currentTimeMillis = System.currentTimeMillis();
+        double timeSinceStart = (currentTimeMillis-startTimeMillis)/1000;
         if (logging) {
-            orientation.println(currentTimeStamp() + SEPARATOR + calculatedAndRawTimeStamp(timestamp) + SEPARATOR + phiDegInt + SEPARATOR + rhoDegInt);
-        }
+            orientation.println(timeSinceStart + SEPARATOR + hr + SEPARATOR + activityLevel + SEPARATOR + rhoDegFilt + SEPARATOR + phiDegFilt + SEPARATOR + rhoDeg + SEPARATOR + phiDeg);
+            }
+            
     }
+    
+    @Override
+    public void orientation(int[] value, int timestamp) {
+    //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     
 }

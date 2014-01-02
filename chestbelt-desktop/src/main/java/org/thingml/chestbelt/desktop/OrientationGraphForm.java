@@ -84,7 +84,7 @@ public class OrientationGraphForm extends javax.swing.JFrame implements ChestBel
         jPanel4 = new LineGraphPanel(zbuffer, "rotation z (deg)", -180, 180, YMINOR, XMINOR, OCOLOR);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("ChestBelt Heart Rate and ECG Graphs");
+        setTitle("Orientation Angles");
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosed(java.awt.event.WindowEvent evt) {
                 OrientationGraphForm.this.windowClosed(evt);
@@ -255,7 +255,7 @@ private void windowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_win
     }
 
     @Override
-    public void orientation(int[] orientationArray) {
+    public void orientation(int[] orientationArray, int timestamp) {
         int phiDeg;
         int rhoDeg;
         int thetaDeg;
@@ -267,6 +267,11 @@ private void windowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_win
         xbuffer.insertData(phiDeg);
         ybuffer.insertData(rhoDeg);
         zbuffer.insertData(thetaDeg);
+    }
+
+    @Override
+    public void logOrientation(int[] orientationRaw, int[] orientationFiltered, int timestamp) {
+       // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     

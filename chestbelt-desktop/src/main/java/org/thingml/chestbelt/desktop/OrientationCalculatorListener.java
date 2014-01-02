@@ -25,5 +25,6 @@ package org.thingml.chestbelt.desktop;
  * @author oyvsta
  */
 public interface OrientationCalculatorListener {
-    public void orientation(int[] value);
+    public void orientation(int[] value, int timestamp);
+    public void logOrientation(int[] orientationRaw, int[] orientationFiltered, int timestamp);
 }
