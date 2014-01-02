@@ -56,7 +56,6 @@ public class FileLoggerForm extends javax.swing.JFrame {
     
     public FileLoggerForm(ChestBelt b, OrientationCalculator orientationCalculator) {
         this.belt = b;
-        if (orientationCalculator==null)  orientationCalculator = new OrientationCalculator(belt);
         this.orientationCalculator = orientationCalculator;
         initComponents();
         chooser.setFileSelectionMode( JFileChooser.DIRECTORIES_ONLY);

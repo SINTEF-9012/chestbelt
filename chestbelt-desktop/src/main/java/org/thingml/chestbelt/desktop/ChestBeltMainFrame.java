@@ -915,6 +915,7 @@ private void jComboBoxBTIntActionPerformed(java.awt.event.ActionEvent evt) {//GE
 
 private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
     if (belt != null) {
+        if (orientationCalculator==null)  orientationCalculator = new OrientationCalculator(belt);
         FileLoggerForm form = new FileLoggerForm(belt, orientationCalculator);
         form.pack();
         form.setVisible(true);
