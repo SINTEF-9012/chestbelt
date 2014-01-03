@@ -116,7 +116,7 @@ public class ChestBeltFileLogger implements ChestBeltListener, OrientationCalcul
            phi.println("RXTime" + SEPARATOR + "CorrTime" + SEPARATOR + "RawTime" + SEPARATOR + "Heart Rate (BPM)" + SEPARATOR + "Temperature (°C)");
            
            orientation = new PrintWriter(new FileWriter(new File(sFolder, "Chestbelt_orientation.txt")));
-           orientation.println("Time (s)" + SEPARATOR + "Heart Rate (BPM)" + SEPARATOR + "Activity Level (0-3)" + SEPARATOR + "Pitch Filtered (Deg)" + SEPARATOR + "Roll Filtered (Deg)" + SEPARATOR + "Pitch Raw (Deg)" + SEPARATOR + "Roll Raw(Deg)");
+           orientation.println("Time (HH-MM-SS)" + SEPARATOR + "Time From Logging Start (s)" + SEPARATOR + "Heart Rate (BPM)" + SEPARATOR + "Activity Level (0-3)" + SEPARATOR + "Pitch Filtered (Deg)" + SEPARATOR + "Roll Filtered (Deg)" + SEPARATOR + "Pitch Raw (Deg)" + SEPARATOR + "Roll Raw(Deg)");
            startTimeMillis = System.currentTimeMillis();
        
            
@@ -506,10 +506,14 @@ public class ChestBeltFileLogger implements ChestBeltListener, OrientationCalcul
         int rhoDegFilt = orientationFiltered[1];
         
         double hr = heartrate/10.0;
+        
+        SimpleDateFormat timestampFormat = new SimpleDateFormat("HH-mm-ss");
+        String currentTime = timestampFormat.format( Calendar.getInstance().getTime());
+        
         long currentTimeMillis = System.currentTimeMillis();
         double timeSinceStart = (currentTimeMillis-startTimeMillis)/1000;
         if (logging) {
-            orientation.println(timeSinceStart + SEPARATOR + hr + SEPARATOR + activityLevel + SEPARATOR + rhoDegFilt + SEPARATOR + phiDegFilt + SEPARATOR + rhoDeg + SEPARATOR + phiDeg);
+            orientation.println(currentTime + SEPARATOR + timeSinceStart + SEPARATOR + hr + SEPARATOR + activityLevel + SEPARATOR + rhoDegFilt + SEPARATOR + phiDegFilt + SEPARATOR + rhoDeg + SEPARATOR + phiDeg);
             }
             
     }
