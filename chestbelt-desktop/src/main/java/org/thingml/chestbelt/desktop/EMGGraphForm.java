@@ -212,6 +212,15 @@ private void windowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_win
         int rmsWinSizeCh1 = jComboBox1.getSelectedIndex();
         int rmsWinRateCh1 = jComboBox2.getSelectedIndex();
         
+        if (rmsWinSizeCh1 < 2) {
+            rmsWinSizeCh1 = 2;
+            jComboBox1.setSelectedIndex(rmsWinSizeCh1);
+        }
+        if (rmsWinRateCh1 < 2) {
+            rmsWinRateCh1 = 2;
+            jComboBox2.setSelectedIndex(rmsWinRateCh1);
+        }
+
         // Assure that winSize never gets smaller than winRate
         if(rmsWinSizeCh1 < rmsWinRateCh1) {
             rmsWinSizeCh1 = rmsWinRateCh1;
@@ -228,6 +237,15 @@ private void windowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_win
         int rmsWinSizeCh2 = jComboBox3.getSelectedIndex();
         int rmsWinRateCh2 = jComboBox4.getSelectedIndex();
 
+        if (rmsWinSizeCh2 < 2) {
+            rmsWinSizeCh2 = 2;
+            jComboBox3.setSelectedIndex(rmsWinSizeCh2);
+        }
+        if (rmsWinRateCh2 < 2) {
+            rmsWinRateCh2 = 2;
+            jComboBox4.setSelectedIndex(rmsWinRateCh2);
+        }
+        
         // Assure that winSize never gets smaller than winRate
         if(rmsWinSizeCh2 < rmsWinRateCh2) {
             rmsWinSizeCh2 = rmsWinRateCh2;
