@@ -111,6 +111,9 @@ public class ChestBelt implements Runnable, TimeSynchronizable {
         int msg_index = 0;
         byte[] message = new byte[32];
 
+        byte[] last_message = new byte[32];
+        int last_target_length = 0;
+        
         try {
             while (!terminate && ((len = this.in.read(buffer)) > -1)) {
                 receivedBytes += len;
@@ -138,6 +141,8 @@ public class ChestBelt implements Runnable, TimeSynchronizable {
                         if (msg_index > 0 && msg_index < target_length) {
                             message[msg_index++] = c;
                             if (msg_index == target_length) {
+                                last_message = message;  // For debug
+                                last_target_length = target_length; // For debug
                                 // We got a complete message: Forward to listeners
                                 switch (code) {
                                     case 110:
@@ -230,6 +235,12 @@ public class ChestBelt implements Runnable, TimeSynchronizable {
                             }
                         } else {
                             System.err.println("ChestBelt: Received Corrupted Data.");
+                            System.err.print("Last msg len = " + last_target_length + " data = ");
+                            int idx;
+                            for (idx = 0; idx<last_target_length; idx++) {
+                                System.err.print("" + last_message[idx] + " ");
+                            }
+                            System.err.println("Additional received = " + c); 
                         }
                     }
                 }
