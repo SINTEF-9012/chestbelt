@@ -65,6 +65,10 @@ public class ChestBeltMainFrame extends javax.swing.JFrame implements ChestBeltL
     
     private SerialPort serialPort = null;
     
+    private boolean activeVerifyTestMode = false;
+    private boolean activeTestMode = false;
+    DebugConsole VerifyTestMode = null;
+
     public ChestBelt connectChestBelt() {
     	
         ConnectDialog d = new ConnectDialog(this, true);
@@ -161,6 +165,7 @@ public class ChestBeltMainFrame extends javax.swing.JFrame implements ChestBeltL
         jButton3 = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         jComboBoxBTInt = new javax.swing.JComboBox();
+        jCheckBoxDebugCons = new javax.swing.JCheckBox();
         jPanel9 = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
         jProgressBarBatt = new javax.swing.JProgressBar();
@@ -546,6 +551,13 @@ public class ChestBeltMainFrame extends javax.swing.JFrame implements ChestBeltL
             }
         });
 
+        jCheckBoxDebugCons.setText("Verify Test Mode");
+        jCheckBoxDebugCons.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBoxDebugConsActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
@@ -559,7 +571,9 @@ public class ChestBeltMainFrame extends javax.swing.JFrame implements ChestBeltL
                 .addComponent(jButton4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 273, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jCheckBoxDebugCons)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jComboBoxBTInt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -575,7 +589,8 @@ public class ChestBeltMainFrame extends javax.swing.JFrame implements ChestBeltL
                     .addComponent(jButton4)
                     .addComponent(jButton3)
                     .addComponent(jComboBoxBTInt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
+                    .addComponent(jLabel4)
+                    .addComponent(jCheckBoxDebugCons))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -902,6 +917,13 @@ private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
 private void jComboBoxModeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxModeActionPerformed
     if (belt != null) {
         belt.setDataMode(((ChestBeltMode)jComboBoxMode.getSelectedItem()));
+        if (((ChestBeltMode)jComboBoxMode.getSelectedItem()) == ChestBeltMode.Test) {
+            activeTestMode = true;
+        }
+        else {
+            activeTestMode = false;
+        }
+
     }
 }//GEN-LAST:event_jComboBoxModeActionPerformed
 
@@ -1007,6 +1029,41 @@ private void jTextFieldRefTimeActionPerformed(java.awt.event.ActionEvent evt) {/
         orientationgraphform.setVisible(true);        
     }//GEN-LAST:event_jButton12ActionPerformed
 
+    private void jCheckBoxDebugConsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxDebugConsActionPerformed
+        if (jCheckBoxDebugCons.isSelected())
+        {
+            if (belt != null) {
+                VerifyTestMode = new DebugConsole(50000,1000);
+                VerifyTestMode.setSize(600, 750);
+                VerifyTestMode.setTitle("Verify Test Mode");
+                VerifyTestMode.setVisible(true);
+                VerifyTestMode.putString("***Verify Test mode***\n***Select Test Mode***\n");
+                activeVerifyTestMode = true;
+            }
+        }
+        else {
+            activeVerifyTestMode = false;
+        }
+    }//GEN-LAST:event_jCheckBoxDebugConsActionPerformed
+
+        int ECG_test_value = 0;
+    int ECG_mismatch_cnt = 0;
+    int ECG_wrap_cnt = 0;
+
+    private void VerifyCount(int value) {
+        if (activeVerifyTestMode && activeTestMode) {
+            //VerifyTestMode.putString("Value " + value + "\n");
+            if ((value == 0) &&(ECG_test_value == 4095)) {
+                ECG_wrap_cnt++;
+                VerifyTestMode.putString("ECG test wrap " + ECG_wrap_cnt + " (Error count = " + ECG_mismatch_cnt + ")\n");
+            } else if (value != ECG_test_value + 1) {
+                ECG_mismatch_cnt++;
+                VerifyTestMode.putString("ECG test data mismatch, expected " + (ECG_test_value + 1) + " got " + value + " (" + ECG_mismatch_cnt + ")\n");
+            }
+            ECG_test_value = value;
+        }
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -1053,6 +1110,7 @@ private void jTextFieldRefTimeActionPerformed(java.awt.event.ActionEvent evt) {/
     private javax.swing.JButton jButton9;
     private javax.swing.JButton jButtonAlert;
     private javax.swing.JCheckBox jCheckBox1;
+    private javax.swing.JCheckBox jCheckBoxDebugCons;
     private javax.swing.JComboBox jComboBoxAlertLevel;
     private javax.swing.JComboBox jComboBoxBTInt;
     private javax.swing.JComboBox jComboBoxMode;
@@ -1221,7 +1279,7 @@ private void jTextFieldRefTimeActionPerformed(java.awt.event.ActionEvent evt) {/
 	public void eCGData(int value) {
 		//System.out.println("ECG Data = " + value );
             becg.insertData(value);
-
+            VerifyCount(value);
 	}
 
 	@Override
@@ -1233,7 +1291,8 @@ private void jTextFieldRefTimeActionPerformed(java.awt.event.ActionEvent evt) {/
 
 	@Override
 	public void eCGRaw(int value, int timestamp) {
-		//System.out.println("ECG Raw = " + value + " (t=" + timestamp + ")" );
+            VerifyCount(value);
+            //System.out.println("ECG Raw = " + value + " (t=" + timestamp + ")" );
 
 	}
 
