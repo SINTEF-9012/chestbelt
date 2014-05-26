@@ -113,7 +113,8 @@ public class FileLoggerForm extends javax.swing.JFrame {
             }
         });
 
-        jCheckBoxEpoch.setText("Log Epoch for ECG and EMG");
+        jCheckBoxEpoch.setSelected(true);
+        jCheckBoxEpoch.setText("Log Epoch for ECG");
 
         jButtonOscLog.setText("OscLog");
         jButtonOscLog.addActionListener(new java.awt.event.ActionListener() {

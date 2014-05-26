@@ -113,7 +113,8 @@
     </Component>
     <Component class="javax.swing.JCheckBox" name="jCheckBoxEpoch">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Log Epoch for ECG and EMG"/>
+        <Property name="selected" type="boolean" value="true"/>
+        <Property name="text" type="java.lang.String" value="Log Epoch for ECG"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="jButtonOscLog">
