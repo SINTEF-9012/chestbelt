@@ -69,13 +69,5 @@
     
   </dependencies>
   
-      <repositories>
-        
-        <repository>
-            <id>kevoree-libs-release-local</id>
-            <url>http://maven.kevoree.org/release</url>
-        </repository>
-        
-    </repositories>
   
 </project>
